@@ -3,6 +3,7 @@
 %%% To Do:
 %%% do not exit in between trials.
 %%% get more user data - write as function.
+%%% make stim/show_stimulus adjustable w/ arrow
 
 % ---- Import local files
 import stim.uniqueHues
@@ -37,14 +38,14 @@ params = gen_params(first, show_plot, 0, 0, annulus, subject, ...
 save_to_file(data_record, subject, first, params);
 
 % ---- Present second set of stimuli
-params = gen_params(first, show_plot, 0, 0, annulus, subject, ...
+params = gen_params(second, show_plot, 0, 0, annulus, subject, ...
     constant_stim);
 [data_record, yel_angle, yel] = uniqueHues(params);
 save_to_file(data_record, subject, second, params);
 
 % ---- Present achromatic stimuli
-params = gen_params('white', show_plot, blu, yel, annulus, subject, ...
-    constant_stim);
+params = gen_params('white', show_plot, blu_angle(1), yel_angle(1), ...
+    annulus, subject, constant_stim);
 [data_record, ~, xyz] = uniqueHues(params);
 save_to_file(data_record, subject, 'white', params);
 disp(xyz);

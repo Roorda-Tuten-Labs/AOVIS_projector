@@ -79,7 +79,7 @@ elseif strcmp(uniqueHue, 'white')
     [b_x, b_y] = CIE_from_Angle(params.blu, params.RHO);
     [y_x, y_y] = CIE_from_Angle(params.yel, params.RHO);
     line1 = [b_x b_y; y_x y_y];
-    
+
     params.ncolors = 15; % override default setting to ensure good sampling
     params.angles = linspace(params.blu - 5, params.yel + 5, ...
         params.ncolors);

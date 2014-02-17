@@ -25,8 +25,6 @@ if params.show_plot
     plot_stimuli({'blue' 'yellow' 'white'}, params);
 else
     
-data_record = zeros(params.ntrials, 5);
-
 % Load default calibration file:
 cal = LoadCalFile(params.cal_file);
 T_xyz1931 = csvread('ciexyz31.csv')';
@@ -62,8 +60,9 @@ try
     
     % Retrieves the CLUT color code for black.
     black = BlackIndex(window);  
-
+    
     % ---------- Run the experiment --------
+    data_record = zeros(params.ntrials, 5);
     for trial=1:params.ntrials
         % add color and fixation
         showimg = gen_show_img(img, params.color_sequence(trial, :), ...
@@ -71,6 +70,8 @@ try
         
         % display image
         display_image(window, black, showimg, params.left, params.right);
+        
+        % either present flash or constant stimulus
         if params.constant_stim
             % get user input
             data_record = get_key_input(cal, data_record, params, trial);
