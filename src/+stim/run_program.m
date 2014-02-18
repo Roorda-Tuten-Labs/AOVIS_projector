@@ -1,4 +1,4 @@
-function [data_record, fit_params, xyz] = uniqueHues(params)
+function [data_record, fit_params, xyz] = run_program(params)
 % uniqueHues
 
 % ---------- import functions from other modules

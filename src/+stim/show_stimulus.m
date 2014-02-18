@@ -1,13 +1,10 @@
-function show_stimulus(x, y, LUM)
+function show_stimulus(xyY)
 
-if nargin < 3
-    LUM = 100;
-end
-if nargin < 2
-    y = 0.333;
-end
 if nargin < 1
-    x = 0.333;
+    xyY = input('Subject name [default = sample]', 's');
+    if isempty(xyz)
+        xyY = [1/3 1/3 40]';
+    end
 end
 
 cal_file = 'Feb13_2014a';
@@ -21,7 +18,7 @@ T_xyz1931 = 683 * T_xyz1931;
 cal = SetSensorColorSpace(cal, T_xyz1931, S_xyz1931);
 cal = SetGammaMethod(cal,0);
 
-xyY = [x y LUM]';
+%xyY = [x y LUM]';
 
 % Convert to RGB:
 XYZ = xyYToXYZ(xyY);
@@ -74,7 +71,6 @@ try
     
     KbWait();
     
-        
     % ---------- End the experiment and cleanup window --------
     cleanup(oldVisualDebugLevel, oldSupressAllWarnings)
 

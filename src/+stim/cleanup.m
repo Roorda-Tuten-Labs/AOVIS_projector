@@ -1,4 +1,12 @@
 function cleanup(oldVisualDebugLevel, oldSupressAllWarnings)
+
+    if nargin < 2
+        oldSupressAllWarnings = 0;
+    end
+    if nargin < 1
+        oldVisualDebugLevel = 4;
+    end
+    
     % Closes all windows.
     Screen('CloseAll');
     
