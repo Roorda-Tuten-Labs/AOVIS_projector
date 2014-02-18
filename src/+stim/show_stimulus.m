@@ -1,12 +1,19 @@
 function show_stimulus(xyY)
 
+import gen.gen_image_sequence
+import gen.gen_image_mat
+import gen.gen_show_img
+import stim.display_image
+import stim.cleanup
+
 if nargin < 1
-    xyY = input('Subject name [default = sample]', 's');
-    if isempty(xyz)
+    xyY = input('xyY coordinate to display [default = 1/3 1/3 40]', 's');
+    if isempty(xyY)
         xyY = [1/3 1/3 40]';
     end
 end
-
+xy_step = 0.005;
+LUM_step = 2;
 cal_file = 'Feb13_2014a';
 
 % Load default calibration file:
@@ -18,30 +25,22 @@ T_xyz1931 = 683 * T_xyz1931;
 cal = SetSensorColorSpace(cal, T_xyz1931, S_xyz1931);
 cal = SetGammaMethod(cal,0);
 
-%xyY = [x y LUM]';
-
-% Convert to RGB:
-XYZ = xyYToXYZ(xyY);
-disp(XYZ);
-[RGB, outOfRangePixels] = SensorToSettings(cal, XYZ);
-
-% Check for out-of-range non-displayable color values:
-if any(outOfRangePixels)
-    fprintf('WARNING: Out of range RGB values!\n');
-    fprintf('pix = %f\n', outOfRangePixels);
-    fprintf('rgb = %f\n', RGB);
-end
-
-color_sequence = RGB * 255;
-disp(color_sequence);
+% ---------- Gen image sequence --------
+params = [];
+params.ntrials = 1;
+params.nrepeats = 1;
+params.ncolors = 1;
+params.angles = 0;
+params.uniqueHue = 'white';
+params.x = xyY(1);
+params.y = xyY(2);
+params.LUM = xyY(3);
+xyY = [params.x params.y params.LUM];
+params = gen_image_sequence(cal, params);
 
 % ---------- Image Setup ----------
 % Stores the image in a three dimensional matrix.
-radius = 88; % 10 px / mm. 25 cm viewing distance = 2 deg of vis angle.
-img = zeros(radius, radius, 3);
-img(:, :, 1) = imcircle(radius);
-img(:, :, 2) = imcircle(radius);
-img(:, :, 3) = imcircle(radius);
+img = gen_image_mat(0);
 
 try
 	% ---------- Window Setup ----------
@@ -62,14 +61,44 @@ try
     % Retrieves color codes for black and white and gray.
     black = BlackIndex(window);  % Retrieves the CLUT color code for black.
 
-    showimg = zeros(size(img));
-    for k = 1:3
-        showimg(:, :, k) = color_sequence(k) * img(:, :, k);
-    end
-
-    display_image(window, black, showimg);
+    showimg = gen_show_img(img, params.color_sequence, 2);
     
-    KbWait();
+    a = num2str(round(xyY(1:2) * 1000) / 1000);
+    b = num2str(round(xyY(3) * 1000) / 1000);
+    display_image(window, black, showimg, a, b);
+    
+    forward = 0;
+    while ~forward
+        [~, keycode, ~] = KbWait();
+        keyname = KbName(keycode);
+        if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
+            params.x = params.x - xy_step;
+            redraw_image(window, black, cal, img, params);
+            
+        elseif strcmp(keyname, 'RightArrow')|| strcmp(keyname, 'right')
+            params.x = params.x + xy_step;
+            redraw_image(window, black, cal, img, params);
+            
+        elseif strcmp(keyname, 'UpArrow')|| strcmp(keyname, 'up')
+            params.y = params.y + xy_step;
+            redraw_image(window, black, cal, img, params);
+            
+        elseif strcmp(keyname, 'DownArrow')|| strcmp(keyname, 'down')
+            params.y = params.y - xy_step;
+            redraw_image(window, black, cal, img, params);
+
+        elseif strcmp(keyname, 'Return')|| strcmp(keyname, 'ENTER')
+            params.LUM = params.LUM + LUM_step;
+            redraw_image(window, black, cal, img, params);
+            
+        elseif strcmp(keyname, 'RightShift')|| strcmp(keyname, 'shift')
+            params.LUM = params.LUM - LUM_step;
+            redraw_image(window, black, cal, img, params);
+            
+        else
+            forward = 1;
+        end
+    end
     
     % ---------- End the experiment and cleanup window --------
     cleanup(oldVisualDebugLevel, oldSupressAllWarnings)
@@ -84,19 +113,15 @@ catch  %#ok<*CTCH>
 end
 end
 
-function display_image(window, black, showimg)
-
-    % ---------- Image Display ---------- 
-    % Colors the entire window gray.
-    Screen('FillRect', window, black);
-    % Writes the image to the window.
-    Screen('PutImage', window, showimg);
-    % Writes text to the window.
-    currentTextRow = 0;
-    Screen('DrawText', window, ...
-        sprintf('%s', 'press any key'), ...
-            0, currentTextRow, 150);
-    % Updates the screen to reflect our changes to the window.
-    Screen('Flip', window);
-        
+function redraw_image(window, black, cal, img, params)
+    import gen.gen_image_sequence
+    import gen.gen_show_img
+    import stim.display_image
+    params = gen_image_sequence(cal, params);
+    xyY = [params.x params.y params.LUM];
+    showimg = gen_show_img(img, params.color_sequence, 2);
+    a = num2str(round(xyY(1:2) * 1000) / 1000);
+    b = num2str(round(xyY(3) * 1000) / 1000);
+    display_image(window, black, showimg, a, b);
+    pause(0.2); % prevent 'sticky keys'
 end

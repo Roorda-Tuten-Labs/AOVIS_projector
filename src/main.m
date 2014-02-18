@@ -3,10 +3,10 @@
 %%% To Do:
 %%% do not exit in between trials.
 %%% get more user data - write as function.
-%%% make stim/show_stimulus adjustable w/ arrow
+%%% make better quit function.
 
 % ---- Import local files
-import stim.uniqueHues
+import stim.run_program
 import fil.save_to_file
 import fil.check_for_data_dir
 import fil.add_depend
@@ -34,19 +34,19 @@ check_for_data_dir(subject);
 % ---- Present first set of stimuli
 params = gen_params(first, show_plot, 0, 0, annulus, subject, ...
     constant_stim);
-[data_record, blu_angle, blu] = uniqueHues(params);
+[data_record, blu_angle, blu] = run_program(params);
 save_to_file(data_record, subject, first, params);
 
 % ---- Present second set of stimuli
 params = gen_params(second, show_plot, 0, 0, annulus, subject, ...
     constant_stim);
-[data_record, yel_angle, yel] = uniqueHues(params);
+[data_record, yel_angle, yel] = run_program(params);
 save_to_file(data_record, subject, second, params);
 
 % ---- Present achromatic stimuli
 params = gen_params('white', show_plot, blu_angle(1), yel_angle(1), ...
     annulus, subject, constant_stim);
-[data_record, ~, xyz] = uniqueHues(params);
+[data_record, ~, xyz] = run_program(params);
 save_to_file(data_record, subject, 'white', params);
 disp(xyz);
 
