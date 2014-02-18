@@ -1,10 +1,10 @@
 function [first, second] = gen_hue_order()
 
     randomize = Randi(2);
-    if randomize
+    if randomize == 1
         first = 'blue';
         second = 'yellow';
-    else
+    elseif randomize == 2
         first = 'yellow';
         second = 'blue';
     end

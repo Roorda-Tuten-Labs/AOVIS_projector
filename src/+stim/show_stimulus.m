@@ -65,7 +65,7 @@ try
     
     a = num2str(round(xyY(1:2) * 1000) / 1000);
     b = num2str(round(xyY(3) * 1000) / 1000);
-    display_image(window, black, showimg, a, b);
+    display_image(window, black, showimg, a, b, 'xy', 'LUM');
     
     forward = 0;
     while ~forward
@@ -122,6 +122,6 @@ function redraw_image(window, black, cal, img, params)
     showimg = gen_show_img(img, params.color_sequence, 2);
     a = num2str(round(xyY(1:2) * 1000) / 1000);
     b = num2str(round(xyY(3) * 1000) / 1000);
-    display_image(window, black, showimg, a, b);
+    display_image(window, black, showimg, a, b, 'xy', 'LUM');
     pause(0.2); % prevent 'sticky keys'
 end
