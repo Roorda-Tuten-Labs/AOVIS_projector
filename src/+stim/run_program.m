@@ -1,5 +1,10 @@
-function [data_record, fit_params, xyz] = run_program(params)
+function [data_record, fit_params, xyz] = run_program(window, params, ...
+    close_at_end)
 % uniqueHues
+
+if nargin < 3
+    close_at_end = 0;
+end
 
 % ---------- import functions from other modules
 import gen.gen_image_mat
@@ -38,23 +43,7 @@ params = gen_image_sequence(cal, params);
 % Stores the image in a three dimensional matrix.
 img = gen_image_mat(params.annulus);
 
-try
-    
-	% ---------- Window Setup ----------
-	% Supress checking behavior
-	oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-    oldSupressAllWarnings = Screen('Preference', 'SuppressAllWarnings', 1);
-    
-    % Find out how many screens and use largest screen number.
-    whichScreen = max(Screen('Screens'));
-    
-	% Hides the mouse cursor
-	HideCursor;
-	
-	% Opens a graphics window on the main monitor (screen 0).
-	window = Screen('OpenWindow', whichScreen);
-    LoadIdentityClut(window);
-    
+try 
     % Retrieves the CLUT color code for black.
     black = BlackIndex(window);  
     
@@ -91,16 +80,18 @@ try
         
     end
     % ---------- End the experiment and cleanup window --------
-    cleanup(oldVisualDebugLevel, oldSupressAllWarnings)
+    if close_at_end
+        cleanup();
+    end
 
     %----------- Fit cum gaussian to estimate mean and sigma -------
     [fit_params, too_short] = fit_gaussian(data_record, params.nrepeats);
     
-    %----------- Plot the data
+    %----------- Plot the data -------
     plot_data(data_record, too_short, fit_params, params.left, ...
         params.subject);
     
-    %----------- Compute xyz from mean angle
+    %----------- Compute xyz from mean angle -------
     disp(fit_params);
     mu = fit_params(1);
     xyz = mean_angle_to_xyz(params, mu);
@@ -109,7 +100,7 @@ catch  %#ok<*CTCH>
    
 	% ---------- Error Handling ---------- 
 	% If there is an error in our code, we will end up here.
-	cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
+	cleanup();
 
 	% We throw the error again so the user sees the error description.
 	psychrethrow(psychlasterror);

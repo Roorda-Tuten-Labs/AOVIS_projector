@@ -117,6 +117,7 @@ function params = white_gui(params)
     params.nrepeats = str2double(get(nrepeats,'String'));
     params.cal_file = get(cal_file,'String');
     params.pause_time = str2double(get(pause_time,'String'));
+    params.ntrials = params.ncolors * params.nrepeats;
     
     close all;
 %     end

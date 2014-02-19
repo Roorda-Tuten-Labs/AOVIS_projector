@@ -1,17 +1,17 @@
 %%% unique white
 clear all; close all;
 %%% To Do:
-%%% do not exit in between trials.
-%%% make better quit function.
+%%% compute angle of fixation programmatically
 
 % ---- Import local files
-import stim.run_program
-import fil.save_to_file
-import fil.check_for_data_dir
 import fil.add_depend
-import gen.gen_hue_order
 import gen.gen_params
-import gen.gen_hue_specific_params
+import gen.gen_hue_order
+import fil.check_for_data_dir
+import stim.setup_window
+import stim.show_stimulus_set
+import stim.show_text
+import stim.cleanup
 
 % ---- Add external dependencies to path
 add_depend();
@@ -24,26 +24,31 @@ params = gen_params();
 
 % ---- Call User Interface to change parameters
 params = white_gui(params);
-params.ntrials = params.ncolors * params.nrepeats;
 
 % ---- Make sure directories exist for saving data
 check_for_data_dir(params.subject);
 
-% ---- Present first set of stimuli
-params = gen_hue_specific_params(first, params); % disp(params);
-[data_record, first_angle, blu] = run_program(params);
-save_to_file(data_record, params.subject, first, params);
+% ---- Set up window
+[window, oldVisualDebugLevel, oldSupressAllWarnings] = setup_window(0);
 
-% ---- Present second set of stimuli
-params= gen_hue_specific_params(second, params);
-[data_record, sec_angle, yel] = run_program(params);
-save_to_file(data_record, params.subject, second, params);
+try
+    % ---- Present first set of stimuli
+    [params, ~] = show_stimulus_set(window, params, first);
 
-% ---- Present achromatic stimuli
-params = gen_hue_specific_params('white', params);
-[data_record, ~, xyz] = run_program(params);
-save_to_file(data_record, params.subject, 'white', params);
+    % ---- Present second set of stimuli
+    [params, ~] = show_stimulus_set(window, params, second);
 
-% ---- Print xyz result
+    % ---- Present achromatic stimuli
+    [params, xyz] = show_stimulus_set(window, params, 'white');
+    
+    cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
+    
+catch  %#ok<*CTCH>
+    
+    cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
+    psychrethrow(psychlasterror);
+end
+
+% ---- Print xyz result for white
 disp(xyz);
 
