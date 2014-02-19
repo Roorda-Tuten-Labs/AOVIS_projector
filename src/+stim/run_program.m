@@ -89,7 +89,7 @@ try
     
     %----------- Plot the data -------
     plot_data(data_record, too_short, fit_params, params.left, ...
-        params.subject);
+        params.subject, params.uniqueHue);
     
     %----------- Compute xyz from mean angle -------
     disp(fit_params);

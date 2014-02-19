@@ -1,4 +1,5 @@
-function plot_data(results, too_short, params, ylabel_name, subject)
+function plot_data(results, too_short, params, ylabel_name, subject, ...
+    color)
 
 angles = results(:, 5);
 unique_angles = unique(angles);
@@ -10,7 +11,7 @@ if nargin < 5
     subject = 'sample';
 end
 
-h = figure();
+h = figure('visible','off');
 plot(unique_angles, too_short, '.', 'color', 'k', ...
     'MarkerSize', 25); hold on;
 x = linspace(unique_angles(1), unique_angles(end), 200);
@@ -31,12 +32,12 @@ xlabel('chromatic angle');
 ylabel(ylabel_name);
 
 trial = 1;
-ylabel_name = strrep(ylabel_name, ' ', '_'); %replace space with underscore
-save_name = ['../img/' subject '_' ylabel_name '_' num2str(trial)];
+save_name = ['../img/' subject '_' color '_' num2str(trial) '.eps'];
 while exist(save_name, 'file') == 2
     trial = trial + 1;
-    save_name = ['../img/' subject '_' ylabel_name '_' num2str(trial)];
+    save_name = ['../img/' subject '_' color '_' num2str(trial) '.eps'];
 end
 saveas(h, save_name, 'epsc');
-    
+close(h);
+
 end

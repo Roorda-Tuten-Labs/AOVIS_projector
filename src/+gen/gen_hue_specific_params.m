@@ -1,5 +1,6 @@
 function [params] = gen_hue_specific_params(uniqueHue, params)
-    import convert.CIE_from_Angle
+    import convert.Angle_from_CIE
+    import convert.rad2deg
     import comp.intersect
     
 if strcmp(uniqueHue, 'yellow') 
@@ -21,22 +22,24 @@ elseif strcmp(uniqueHue, 'blue')
 elseif strcmp(uniqueHue, 'white')
     params.uniqueHue = 'white';
     
-    [b_x, b_y] = CIE_from_Angle(params.blu, params.RHO);
-    [y_x, y_y] = CIE_from_Angle(params.yel, params.RHO);
-    line1 = [b_x b_y; y_x y_y];
+    blue_xyz = params.blue_xyz;
+    yellow_xyz = params.yellow_xyz;
 
     params.ncolors = 15; % override default setting to ensure good sampling
-    params.angles = linspace(params.blu - 5, params.yel + 5, ...
-        params.ncolors);
+    params.x = linspace(blue_xyz(1), yellow_xyz(1), params.ncolors);
+    params.y = linspace(blue_xyz(2), yellow_xyz(2), params.ncolors);
     
-    params.x = zeros(params.ncolors, 1);
-    params.y = zeros(params.ncolors, 1);
+    params.angles = zeros(params.ncolors);
+    
     for i=1:length(params.angles)
-        [x_, y_] = CIE_from_Angle(params.angles(i), 0.3);
-        line2 = [x_ y_; 1/3 1/3];
-        [params.x(i), params.y(i)] = intersect(line1, line2);
+        z = 1 - (params.x(i) + params.y(i));
+        angle = Angle_from_CIE([params.x(i) params.y(i) z]');
+        angle = rad2deg(angle); 
+        if angle < 0
+            angle = 360 + angle;
+        end
+        params.angles(i) = angle;
     end
-    params.ntrials = params.ncolors * params.nrepeats;
     params.left = 'too blue';
     params.right = 'too yellow';
 end
