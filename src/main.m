@@ -2,7 +2,6 @@
 clear all; close all;
 %%% To Do:
 %%% compute angle of fixation programmatically
-%%% pixelSize=Screen('PixelSize', windowPtrOrScreenNumber);
 
 % ---- Import local files
 import fil.add_depend
