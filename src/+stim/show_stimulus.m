@@ -35,7 +35,6 @@ params.uniqueHue = 'white';
 params.x = xyY(1);
 params.y = xyY(2);
 params.LUM = xyY(3);
-xyY = [params.x params.y params.LUM];
 params = gen_image_sequence(cal, params);
 
 % ---------- Image Setup ----------
@@ -62,7 +61,7 @@ try
     black = BlackIndex(window);  % Retrieves the CLUT color code for black.
 
     showimg = gen_show_img(img, params.color_sequence, 2);
-    
+ 
     a = num2str(round(xyY(1:2) * 1000) / 1000);
     b = num2str(round(xyY(3) * 1000) / 1000);
     display_image(window, black, showimg, a, b, 'xy', 'LUM');

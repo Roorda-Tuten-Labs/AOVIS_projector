@@ -2,6 +2,7 @@
 clear all; close all;
 %%% To Do:
 %%% compute angle of fixation programmatically
+%%% pixelSize=Screen('PixelSize', windowPtrOrScreenNumber);
 
 % ---- Import local files
 import fil.add_depend
@@ -29,7 +30,8 @@ params = white_gui(params);
 check_for_data_dir(params.subject);
 
 % ---- Set up window
-[window, oldVisualDebugLevel, oldSupressAllWarnings] = setup_window(0);
+[window, oldVisualDebugLevel, oldSupressAllWarnings] = setup_window(...
+    params.screen);
 
 try
     % ---- Present first set of stimuli
