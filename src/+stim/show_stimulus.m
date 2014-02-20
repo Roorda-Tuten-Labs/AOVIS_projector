@@ -61,7 +61,8 @@ try
     black = BlackIndex(window);  % Retrieves the CLUT color code for black.
 
     showimg = gen_show_img(img, params.color_sequence, 2);
- 
+    
+    xyY = [params.x params.y params.LUM];
     a = num2str(round(xyY(1:2) * 1000) / 1000);
     b = num2str(round(xyY(3) * 1000) / 1000);
     display_image(window, black, showimg, a, b, 'xy', 'LUM');

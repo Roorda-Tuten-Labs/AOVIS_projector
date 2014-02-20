@@ -11,7 +11,7 @@ import gen.gen_hue_order
 import fil.check_for_data_dir
 import stim.setup_window
 import stim.show_stimulus_set
-import stim.show_text
+import stim.show_stimulus
 import stim.cleanup
 
 % ---- Add external dependencies to path
@@ -42,6 +42,9 @@ try
 
     % ---- Present achromatic stimuli
     [params, xyz] = show_stimulus_set(window, params, 'white');
+    
+    % ---- Show final stimulus
+    show_stimulus([xyz(1) xyz(2) params.LUM]');
     
     cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
     
