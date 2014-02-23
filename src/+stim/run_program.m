@@ -1,6 +1,7 @@
 function [data_record, fit_params, xyz] = run_program(window, params, ...
     close_at_end)
 % uniqueHues
+%%% white computation (linear spacing) - less yellow bias.
 
 if nargin < 3
     close_at_end = 0;
@@ -85,11 +86,11 @@ try
     end
 
     %----------- Fit cum gaussian to estimate mean and sigma -------
-    [fit_params, too_short] = fit_gaussian(data_record, params.nrepeats);
+    [fit_params, too_short] = fit_gaussian(data_record, params.nrepeats, ...
+        params.invert);
     
     %----------- Plot the data -------
-    plot_data(data_record, too_short, fit_params, params.left, ...
-        params.subject, params.uniqueHue);
+    plot_data(data_record, too_short, fit_params, params);
     
     %----------- Compute xyz from mean angle -------
     disp(fit_params);

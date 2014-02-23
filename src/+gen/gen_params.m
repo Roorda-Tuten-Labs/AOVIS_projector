@@ -58,7 +58,7 @@ params.RHO = 0.09;
 params.angle_bounds = [];
 params.angle_bounds.y1 = 40;
 params.angle_bounds.y2 = 100;
-params.angle_bounds.b1 = 180;
+params.angle_bounds.b1 = 175;
 params.angle_bounds.b2 = 240;
 
 params = gen_hue_specific_params(params.uniqueHue, params);

@@ -1,6 +1,7 @@
-function [params, too_short] = fit_gaussian(results, nrepeats)
+function [params, too_short] = fit_gaussian(results, nrepeats, invert)
 
 import fit.residuals_gauss
+import fit.invert_residuals_gauss
 
 if nargin < 2
   nrepeats = 10;
@@ -23,6 +24,11 @@ too_short = nrepeats - too_long;
 too_short = too_short / nrepeats;
 
 guess = [mean(unique_angles), std(unique_angles)];
-params = lsqcurvefit(@residuals_gauss, guess, unique_angles, too_short);
+if invert
+    params = lsqcurvefit(@invert_residuals_gauss, guess, unique_angles, ...
+        too_short);
+else
+    params = lsqcurvefit(@residuals_gauss, guess, unique_angles, too_short);
+end
 
 end

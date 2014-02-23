@@ -1,41 +1,44 @@
-function plot_data(results, too_short, params, ylabel_name, subject, ...
-    color)
+function plot_data(results, too_short, fit_params, params)
 
 angles = results(:, 5);
 unique_angles = unique(angles);
-
-if nargin < 4
-    ylabel_name = 'too short';
-end
-if nargin < 5
-    subject = 'sample';
-end
 
 h = figure('visible','off');
 plot(unique_angles, too_short, '.', 'color', 'k', ...
     'MarkerSize', 25); hold on;
 x = linspace(unique_angles(1), unique_angles(end), 200);
-plot(x, normcdf(x, params(1), params(2)), '-', ...
+if ~params.invert
+    plot(x, normcdf(x, fit_params(1), fit_params(2)), '-', ...
     'color', 'k', 'LineWidth', 2.5);
+else
+    plot(x, 1 - normcdf(x, fit_params(1), fit_params(2)), '-', ...
+        'color', 'k', 'LineWidth', 2.5);
+end
 
-text(unique_angles(1) + 1, 0.95, ['\mu= ' num2str(round(params(1) ...
+text(unique_angles(1) + 1, 0.95, ['\mu= ' num2str(round(fit_params(1) ...
     * 100) / 100)], 'FontSize', 20);
 text(unique_angles(1) + 1, 0.85, ['\sigma = ' num2str(round( ...
-    params(2) * 100) / 100)], 'FontSize', 20);
+    fit_params(2) * 100) / 100)], 'FontSize', 20);
 
 axis square
 ylim([-0.05, 1.05]);
 set(gca,'fontsize', 20, 'linewidth', 1, 'TickDir', 'out', ...
     'TickLength', [0.05 0.0]);
 box off;
-xlabel('chromatic angle');
-ylabel(ylabel_name);
+if ~strcmp(params.uniqueHue, 'white')
+    xlabel('chromatic angle');
+else
+    xlabel('proportion blue');
+end
+ylabel(params.left);
 
 trial = 1;
-save_name = ['../img/' subject '_' color '_' num2str(trial) '.eps'];
+save_name = ['../img/' params.subject '_' params.uniqueHue '_' ...
+    num2str(trial) '.eps'];
 while exist(save_name, 'file') == 2
     trial = trial + 1;
-    save_name = ['../img/' subject '_' color '_' num2str(trial) '.eps'];
+    save_name = ['../img/' params.subject '_' params.uniqueHue '_' ...
+        num2str(trial) '.eps'];
 end
 saveas(h, save_name, 'epsc');
 close(h);
