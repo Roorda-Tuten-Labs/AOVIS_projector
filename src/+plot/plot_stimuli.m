@@ -40,7 +40,13 @@ S_xyz1931 = [380, 5, 81];
 
 xyz = diag(1 ./ sum(T_xyz1931, 1)) * T_xyz1931';
 figure(1); 
-plot(xyz(:, 1), xyz(:, 2), 'k-', 'LineWidth', 2); hold on;
+
+if strcmp(params.color_space, 'Luv')
+uv = xyTouv(xyz(:, 1:2)')';
+plot(uv(:, 1), uv(:, 2));
+elseif strcmp(params.color_space, 'xyY')
+    plot(xyz(:, 1), xyz(:, 2), 'k-', 'LineWidth', 2); hold on;
+end
 
 T_xyz1931 = 683 * T_xyz1931;
 cal = SetSensorColorSpace(cal, T_xyz1931, S_xyz1931);
@@ -99,7 +105,7 @@ for hue=hues
 
         % Convert to RGB:
         XYZ = xyYToXYZ(xyY);
-        [RGB, outOfRangePixels] = SensorToSettings(cal, XYZ);
+        [RGB, ~] = SensorToSettings(cal, XYZ);
 
         XYZ = XYZ / sum(XYZ);
         plot(XYZ(1), XYZ(2), '.', 'MarkerSize', 25,  'color', RGB);

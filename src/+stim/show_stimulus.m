@@ -1,4 +1,4 @@
-function show_stimulus(xyY)
+function show_stimulus(xyY, params)
 
 import gen.gen_image_sequence
 import gen.gen_image_mat
@@ -12,6 +12,10 @@ if nargin < 1
         xyY = [1/3 1/3 40]';
     end
 end
+if nargin < 2
+    params = [];
+end
+
 xy_step = 0.005;
 LUM_step = 2;
 cal_file = 'Feb13_2014a';
@@ -26,7 +30,6 @@ cal = SetSensorColorSpace(cal, T_xyz1931, S_xyz1931);
 cal = SetGammaMethod(cal,0);
 
 % ---------- Gen image sequence --------
-params = [];
 params.ntrials = 1;
 params.nrepeats = 1;
 params.ncolors = 1;

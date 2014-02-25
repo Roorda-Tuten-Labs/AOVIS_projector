@@ -15,11 +15,6 @@ else
         'color', 'k', 'LineWidth', 2.5);
 end
 
-text(unique_angles(1) + 1, 0.95, ['\mu= ' num2str(round(fit_params(1) ...
-    * 100) / 100)], 'FontSize', 20);
-text(unique_angles(1) + 1, 0.85, ['\sigma = ' num2str(round( ...
-    fit_params(2) * 100) / 100)], 'FontSize', 20);
-
 axis square
 ylim([-0.05, 1.05]);
 set(gca,'fontsize', 20, 'linewidth', 1, 'TickDir', 'out', ...
@@ -31,6 +26,11 @@ else
     xlabel('proportion blue');
 end
 ylabel(params.left);
+
+text(unique_angles(1) * 1.02, 0.35, ['\mu= ' num2str(round(fit_params(1) ...
+    * 100) / 100)], 'FontSize', 20);
+text(unique_angles(1) * 1.02, 0.25, ['\sigma = ' num2str(round( ...
+    fit_params(2) * 100) / 100)], 'FontSize', 20);
 
 trial = 1;
 save_name = ['../img/' params.subject '_' params.uniqueHue '_' ...

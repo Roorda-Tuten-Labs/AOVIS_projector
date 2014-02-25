@@ -30,7 +30,7 @@ elseif strcmp(uniqueHue, 'white')
 
     params.ncolors = 15; % override default setting to ensure good sampling
     
-    x_lim = yellow_xyz(1) - 0.015; % no need to go any yellower.
+    x_lim = yellow_xyz(1) - 0.04; % no need to go any yellower.
     y_lim = interp1([blue_xyz(1) yellow_xyz(1)], ...
         [blue_xyz(2) yellow_xyz(2)], x_lim, 'linear');
     

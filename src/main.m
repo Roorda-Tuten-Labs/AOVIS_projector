@@ -2,6 +2,8 @@
 clear all; close all;
 %%% To Do:
 %%% compute angle of fixation programmatically
+%%% add in method of adjustment option, use Luv space.
+%%% add comments section to gui parameters
 
 % ---- Import local files
 import fil.add_depend
@@ -43,7 +45,7 @@ try
     [params, xyz] = show_stimulus_set(window, params, 'white');
     
     % ---- Show final stimulus
-    show_stimulus([xyz(1) xyz(2) params.LUM]');
+    show_stimulus([xyz(1) xyz(2) params.LUM]', params);
     
     cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
     

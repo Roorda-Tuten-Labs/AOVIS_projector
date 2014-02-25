@@ -1,7 +1,6 @@
 function [params] = gen_params(uniqueHue, ...
     show_plot, blu, yel, ANNULUS, subject, constant_stim)
 
-import convert.CIE_from_Angle
 import comp.intersect
 import gen.gen_hue_specific_params
 
@@ -54,6 +53,8 @@ params.LUM = 50;
 params.ncolors = 10; 
 params.nrepeats = 10;
 params.RHO = 0.09;
+
+params.color_space = 'Luv';
 
 params.angle_bounds = [];
 params.angle_bounds.y1 = 40;
