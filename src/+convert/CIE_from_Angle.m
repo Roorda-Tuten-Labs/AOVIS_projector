@@ -6,10 +6,11 @@ if nargin < 3
     color_space = 'Luv';
 end
 
-if strcmp(color_space, 'xyY')
-    white_point = [1/3 1/3];
-elseif strcmp(color_space, 'Luv')
-    white_point = [0.2009 0.4610];
+white_point = [1/3 1/3];
+
+
+if strcmp(color_space, 'Luv')
+    white_point = xyTouv(white_point');
 end
 
 [x, y] = pol2cart(deg2rad(deg), rho);

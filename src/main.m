@@ -3,7 +3,6 @@ clear all; close all;
 %%% To Do:
 %%% compute angle of fixation programmatically
 %%% add in method of adjustment option, use Luv space.
-%%% add comments section to gui parameters
 
 % ---- Import local files
 import fil.add_depend
@@ -56,5 +55,10 @@ catch  %#ok<*CTCH>
 end
 
 % ---- Print xyz result for white
-disp(xyz);
+if strcmp(params.color_space, 'xyY')
+    disp(xyz);
+elseif strcmp(params.color_space, 'Luv')
+    disp(xyz);
+    disp(uvToxy(xyz(1:2)));
+end
 

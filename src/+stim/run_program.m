@@ -33,7 +33,7 @@ cal = LoadCalFile(params.cal_file);
 T_xyz1931 = csvread('ciexyz31.csv')';
 S_xyz1931 = [380, 5, 81];
 
-T_xyz1931 = 683 * T_xyz1931;
+T_xyz1931 = 683 * T_xyz1931;  % lm/W (CIE recommendation for self-luminous)
 cal = SetSensorColorSpace(cal, T_xyz1931, S_xyz1931);
 cal = SetGammaMethod(cal,0);
 

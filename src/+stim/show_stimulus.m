@@ -16,7 +16,7 @@ if nargin < 2
     params = [];
 end
 
-xy_step = 0.005;
+xy_step = 0.0025;
 LUM_step = 2;
 cal_file = 'Feb13_2014a';
 

@@ -29,11 +29,15 @@ elseif strcmp(uniqueHue, 'white')
     yellow_xyz = params.yellow_xyz;
 
     params.ncolors = 15; % override default setting to ensure good sampling
-    
-    x_lim = yellow_xyz(1) - 0.04; % no need to go any yellower.
-    y_lim = interp1([blue_xyz(1) yellow_xyz(1)], ...
-        [blue_xyz(2) yellow_xyz(2)], x_lim, 'linear');
-    
+    if strcmp(params.color_space, 'xyY')
+        x_lim = yellow_xyz(1) - 0.04; % no need to go any yellower.
+        y_lim = interp1([blue_xyz(1) yellow_xyz(1)], ...
+            [blue_xyz(2) yellow_xyz(2)], x_lim, 'linear');
+    else
+        x_lim = yellow_xyz(1); % no need to go any yellower.
+        y_lim = interp1([blue_xyz(1) yellow_xyz(1)], ...
+            [blue_xyz(2) yellow_xyz(2)], x_lim, 'linear');
+    end
     params.x = linspace(blue_xyz(1), x_lim, params.ncolors);
     params.y = linspace(blue_xyz(2), y_lim, params.ncolors);
     params.invert = 1;

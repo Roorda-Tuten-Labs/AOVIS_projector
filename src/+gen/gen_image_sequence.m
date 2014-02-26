@@ -20,7 +20,7 @@ for i=1:params.ncolors
         %Luv = [params.LUM x y]';
         xy = uvToxy([a b]');
         xyY = [xy(1, :), xy(2, :) params.LUM]';
-        disp(xyY)
+
     elseif strcmp(params.color_space, 'xyY')
         xyY = [a b params.LUM]';
         
@@ -46,5 +46,4 @@ end
 p = randperm(params.ntrials); % 1:ntrials
 color_sequence = color_sequence(p, :);
 params.color_sequence = color_sequence;
-disp(color_sequence)
 end

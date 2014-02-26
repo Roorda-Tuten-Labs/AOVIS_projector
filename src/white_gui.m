@@ -127,28 +127,54 @@ function params = white_gui(params)
             'Units','normalized',...
             'String', num2str(params.screen),...
             'Position', [.65 .25 .25 .10]); 
+
+    uicontrol(ph,'Style','text',...
+                'String','comments',...
+                'Units','normalized',...
+                'Position',[.65 .15 .25 .10]);
+            
+    comment = uicontrol(ph,'Style','edit',...
+            'Units','normalized',...
+            'String', '',...
+            'Position', [.65 .1 .25 .10]); 
         
     uicontrol(ph,'Style','pushbutton','String','start',...
             'Units','normalized',...
             'Position',[.35 .02 .25 .15], ...
             'Callback', 'uiresume(gcbf)');
+
+    uicontrol(ph,'Style','pushbutton','String','plot stimuli',...
+            'Units','normalized',...
+            'Position',[.05 .02 .25 .15], ...
+            'Callback', @plot_stimuli);
         
     uiwait(f);
-          
-    params.subject = get(subject_ID,'String');
-    params.annulus = str2double(get(get(annulus,'SelectedObject'),'Tag'));
-    params.constant_stim = str2double(get(get(constant_stim, ...
-        'SelectedObject'), 'Tag'));
-    params.LUM = str2double(get(LUM,'String'));
-    params.RHO = str2double(get(RHO,'String'));
-    params.ncolors = str2double(get(ncolors,'String'));
-    params.nrepeats = str2double(get(nrepeats,'String'));
-    params.cal_file = get(cal_file,'String');
-    params.pause_time = str2double(get(pause_time,'String'));
-    params.screen = str2double(get(screen,'String'));
-    params.ntrials = params.ncolors * params.nrepeats;
-
+    get_current_params();
     
+    function get_current_params()
+        params.subject = get(subject_ID,'String');
+        params.annulus = str2double(get(get(annulus,'SelectedObject'), ...
+            'Tag'));
+        params.constant_stim = str2double(get(get(constant_stim, ...
+            'SelectedObject'), 'Tag'));
+        params.LUM = str2double(get(LUM,'String'));
+        params.RHO = str2double(get(RHO,'String'));
+        params.ncolors = str2double(get(ncolors,'String'));
+        params.nrepeats = str2double(get(nrepeats,'String'));
+        params.cal_file = get(cal_file,'String');
+        params.pause_time = str2double(get(pause_time,'String'));
+        params.screen = str2double(get(screen,'String'));
+        params.ntrials = params.ncolors * params.nrepeats;
+        params.comment = comment;
+    end
+
+    function plot_stimuli(~, ~)
+        uiresume(f);
+        import plot.plot_stimuli
+        get_current_params();
+        plot_stimuli({'blue' 'yellow' 'white'}, params, 2);
+        uiwait(f);
+    end
     close all;
 
 end
