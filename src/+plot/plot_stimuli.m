@@ -15,8 +15,13 @@ if ~isfield(params, 'cal_file')
     params.cal_file = 'Feb13_2014a';
 end
 
-params.blue_xyz = [0.17, 0.425]';
-params.yellow_xyz = [0.2, 0.54]';
+if strcmp(params.color_space, 'Luv')
+    params.blue_xyz = [0.17, 0.425]';
+    params.yellow_xyz = [0.2, 0.54]';
+elseif strcmp(params.color_space, 'xyY')
+    params.blue_xyz = [0.28 0.28]';
+    params.yellow_xyz = [0.32 0.4]';
+end
 
 cal = LoadCalFile(params.cal_file);
 T_xyz1931 = csvread('ciexyz31.csv')';
@@ -66,7 +71,7 @@ cal = SetGammaMethod(cal,0);
 
 for hue=hues
     params = gen_hue_specific_params(hue, params);
-
+    
     for i=1:params.ncolors
         if strcmp(params.uniqueHue, 'yellow') || ...
                 strcmp(params.uniqueHue, 'blue')
@@ -77,7 +82,12 @@ for hue=hues
             a = params.x(i);
             b = params.y(i);
         end
-
+        
+        if strcmp(params.color_space, 'xyY')
+            tmp = xyTouv([a b]');
+            a = tmp(1); b = tmp(2);
+        end
+        
         % Convert to RGB:
         xy = uvToxy([a b]');
         xyY = [xy(1, :), xy(2, :) params.LUM]';
@@ -90,6 +100,7 @@ for hue=hues
             fprintf('pix = %f\n', outOfRangePixels);
             fprintf('rgb = %f\n', RGB);
         end
+        
         subplot(1, 2, 1);
         plot(a, b, '.', 'MarkerSize', 25,  'color', RGB);
         subplot(1, 2, 2);
