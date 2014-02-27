@@ -25,31 +25,31 @@ elseif strcmp(uniqueHue, 'blue')
 elseif strcmp(uniqueHue, 'white')
     params.uniqueHue = 'white';
     
-    blue_xyz = params.blue_xyz;
-    yellow_xyz = params.yellow_xyz;
+    blue_abc = params.blue_abc;
+    yellow_abc = params.yellow_abc;
 
     params.ncolors = 15; % override default setting to ensure good sampling
     if strcmp(params.color_space, 'xyY')
-        x_lim = yellow_xyz(1); % no need to go any yellower.
-        y_lim = interp1([blue_xyz(1) yellow_xyz(1)], ...
-            [blue_xyz(2) yellow_xyz(2)], x_lim, 'linear');
+        x_lim = yellow_abc(1); % no need to go any yellower.
+        y_lim = interp1([blue_abc(1) yellow_abc(1)], ...
+            [blue_abc(2) yellow_abc(2)], x_lim, 'linear');
     else
-        x_lim = yellow_xyz(1); % no need to go any yellower.
-        y_lim = interp1([blue_xyz(1) yellow_xyz(1)], ...
-            [blue_xyz(2) yellow_xyz(2)], x_lim, 'linear');
+        x_lim = yellow_abc(1); % no need to go any yellower.
+        y_lim = interp1([blue_abc(1) yellow_abc(1)], ...
+            [blue_abc(2) yellow_abc(2)], x_lim, 'linear');
     end
     
-    params.x = linspace(blue_xyz(1), x_lim, params.ncolors);
-    params.y = linspace(blue_xyz(2), y_lim, params.ncolors);
+    params.x = linspace(blue_abc(1), x_lim, params.ncolors);
+    params.y = linspace(blue_abc(2), y_lim, params.ncolors);
 
     params.invert = 1;
-    params.unique_dist = distance_between_points(blue_xyz(1:2), ...
-        yellow_xyz(1:2));
+    params.unique_dist = distance_between_points(blue_abc(1:2), ...
+        yellow_abc(1:2));
     
     params.angles = zeros(params.ncolors, 1);
 
     for i=1:length(params.angles)
-        params.angles(i) = distance_between_points(blue_xyz(1:2), ...
+        params.angles(i) = distance_between_points(blue_abc(1:2), ...
             [params.x(i) params.y(i)]') / params.unique_dist;
     end
     params.left = 'too blue';

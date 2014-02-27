@@ -21,15 +21,17 @@ function [params, xyz] = show_stimulus_set(window, params, hue)
     pause(0.2); 
     
     % run the program
-    [data_record, hue_angle, xyz] = run_program(window, params);
+    [data_record, hue_angle, abc] = run_program(window, params);
     
     % record the blue and yellow angles for use with white later
     if strcmp(hue, 'blue')
         params.blu = hue_angle(1);
-        params.blue_xyz = xyz;
+        params.blue_abc = abc;
     elseif strcmp(hue, 'yellow')
         params.yel = hue_angle(1);
-        params.yellow_xyz = xyz;
+        params.yellow_abc = abc;
+    elseif strcmp(hue, 'white')
+        params.white_abc = xyz;
     end
     
     % save the file to csv and json

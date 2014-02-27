@@ -3,7 +3,7 @@ clear all; close all;
 %%% To Do:
 %%% compute angle of fixation programmatically
 %%% add in method of adjustment option, use Luv space.
-%%% add gui button to indicate xy or uv specification. Rearrange gui.
+%%% add in offset term.
 
 % ---- Import local files
 import fil.add_depend

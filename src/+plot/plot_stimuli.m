@@ -16,11 +16,11 @@ if ~isfield(params, 'cal_file')
 end
 
 if strcmp(params.color_space, 'Luv')
-    params.blue_xyz = [0.17, 0.425]';
-    params.yellow_xyz = [0.2, 0.54]';
+    params.blue_abc = [0.17, 0.425]';
+    params.yellow_abc = [0.2, 0.54]';
 elseif strcmp(params.color_space, 'xyY')
-    params.blue_xyz = [0.28 0.28]';
-    params.yellow_xyz = [0.32 0.4]';
+    params.blue_abc = [0.28 0.28]';
+    params.yellow_abc = [0.32 0.4]';
 end
 
 cal = LoadCalFile(params.cal_file);
