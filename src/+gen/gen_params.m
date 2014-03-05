@@ -21,8 +21,6 @@ else
 end
 
 params.show_plot = 0;
-
-params.annulus = 0;
 params.constant_stim = 1;
 
 params.cal_file = 'Feb13_2014a';
@@ -57,6 +55,21 @@ elseif strcmp(params.color_space, 'Luv')
     params.yel = 82; % chromatic angle in degrees
 
 end
+
+[params.display_width, params.display_height] = Screen('DisplaySize', ...
+    params.screen);
+[params.pixel_width, params.pixel_height] = Screen('WindowSize', ...
+    params.screen);
+
+params.img_width = 200;
+params.img_height = 300;
+
+params.img_offset_width = 0;
+params.img_offset_height = 0;
+
+params.stimulus_shape = 'rectangle';
+
+params.psych_method = 'adjustment';
 
 params = gen_hue_specific_params(params.uniqueHue, params);
 

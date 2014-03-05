@@ -4,6 +4,8 @@ clear all; close all;
 %%% compute angle of fixation programmatically
 %%% add in method of adjustment option, use Luv space.
 %%% add in offset term.
+%%% compute chromatic angle in DLK space 
+%%% compute dominant wavelength
 
 % ---- Import local files
 import fil.add_depend
@@ -34,25 +36,30 @@ check_for_data_dir(params.subject);
 [window, oldVisualDebugLevel, oldSupressAllWarnings] = setup_window(...
     params.screen);
 
-try
-    % ---- Present first set of stimuli
-    [params, ~] = show_stimulus_set(window, params, first);
+if strcmp(params.psych_method, 'forced choice')
+    try
+        % ---- Present first set of stimuli
+        [params, ~] = show_stimulus_set(window, params, first);
 
-    % ---- Present second set of stimuli
-    [params, ~] = show_stimulus_set(window, params, second);
+        % ---- Present second set of stimuli
+        [params, ~] = show_stimulus_set(window, params, second);
 
-    % ---- Present achromatic stimuli
-    [params, xyz] = show_stimulus_set(window, params, 'white');
-    
-    % ---- Show final stimulus
-    show_stimulus([xyz(1) xyz(2) params.LUM]', params);
-    
-    cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
-    
-catch  %#ok<*CTCH>
-    
-    cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
-    psychrethrow(psychlasterror);
+        % ---- Present achromatic stimuli
+        [params, xyz] = show_stimulus_set(window, params, 'white');
+
+        % ---- Show final stimulus
+        show_stimulus([xyz(1) xyz(2) params.LUM]', params);
+
+        cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
+
+    catch  %#ok<*CTCH>
+
+        cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
+        psychrethrow(psychlasterror);
+    end
+elseif strcmp(params.psych_method, 'adjustment')
+    import stim.show_stimulus
+    show_stimulus([0.3 0.3 40], params)
 end
 
 % ---- Print xyz result for white

@@ -42,7 +42,7 @@ params = gen_image_sequence(cal, params);
 
 % ---------- Image Setup ----------
 % Stores the image in a three dimensional matrix.
-img = gen_image_mat(params.annulus);
+img = gen_image_mat(params);
 
 try 
     % Retrieves the CLUT color code for black.
@@ -52,8 +52,7 @@ try
     data_record = zeros(params.ntrials, 5);
     for trial=1:params.ntrials
         % 1. add color and fixation
-        showimg = gen_show_img(img, params.color_sequence(trial, :), ...
-            params.annulus);
+        showimg = gen_show_img(img, params.color_sequence(trial, :), params);
         
         % 2. display image
         display_image(window, black, showimg, params.left, params.right);
@@ -96,7 +95,7 @@ try
     disp(fit_params);
     mu = fit_params(1);
     xyz = mean_angle_to_xyz(params, mu);
-
+    
 catch  %#ok<*CTCH>
    
 	% ---------- Error Handling ---------- 

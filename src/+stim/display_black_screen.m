@@ -5,7 +5,7 @@ function display_black_screen(window, black, img, params)
     
     % ---------- Show black screen in between stim 
     % presentations
-    showimg = gen_show_img(img, [0 0 0], params.annulus);
+    showimg = gen_show_img(img, [0 0 0], params);
     display_image(window, black, showimg, ...
         params.left, params.right)
 

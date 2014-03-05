@@ -18,6 +18,8 @@ end
 
 xy_step = 0.0025;
 LUM_step = 2;
+off_step = 5;
+size_step = 2;
 cal_file = 'Feb13_2014a';
 
 % Load default calibration file:
@@ -42,7 +44,7 @@ params = gen_image_sequence(cal, params);
 
 % ---------- Image Setup ----------
 % Stores the image in a three dimensional matrix.
-img = gen_image_mat(0);
+img = gen_image_mat(params);
 
 try
 	% ---------- Window Setup ----------
@@ -63,7 +65,7 @@ try
     % Retrieves color codes for black and white and gray.
     black = BlackIndex(window);  % Retrieves the CLUT color code for black.
 
-    showimg = gen_show_img(img, params.color_sequence, 2);
+    showimg = gen_show_img(img, params.color_sequence, params);
     
     a = num2str(round(xyY(1:2)' * 1000) / 1000);
     b = num2str(round(xyY(3) * 1000) / 1000);
@@ -97,6 +99,41 @@ try
             params.LUM = params.LUM - LUM_step;
             redraw_image(window, black, cal, img, params);
             
+        elseif strcmp(keyname, 'f')|| strcmp(keyname, 'F')
+            params.img_offset_width = params.img_offset_width  - off_step;
+            img = gen_image_mat(params);
+            redraw_image(window, black, cal, img, params);
+        elseif strcmp(keyname, 'g')|| strcmp(keyname, 'G')
+            params.img_offset_width = params.img_offset_width  + off_step;
+            img = gen_image_mat(params);
+            redraw_image(window, black, cal, img, params);
+        elseif strcmp(keyname, 'v')|| strcmp(keyname, 'V')
+            params.img_offset_height = params.img_offset_height  + off_step;
+            img = gen_image_mat(params);
+            redraw_image(window, black, cal, img, params);
+        elseif strcmp(keyname, 't')|| strcmp(keyname, 'T')
+            params.img_offset_height = params.img_offset_height  - off_step;
+            img = gen_image_mat(params);
+            redraw_image(window, black, cal, img, params);
+
+        elseif strcmp(keyname, 'u')|| strcmp(keyname, 'U')
+            params.img_width = params.img_width  - size_step;
+            img = gen_image_mat(params);
+            redraw_image(window, black, cal, img, params);
+        elseif strcmp(keyname, 'n')|| strcmp(keyname, 'N')
+            params.img_width = params.img_width  + size_step;
+            img = gen_image_mat(params);
+            redraw_image(window, black, cal, img, params);
+        elseif strcmp(keyname, 'h')|| strcmp(keyname, 'H')
+            params.img_height = params.img_height  + size_step;
+            img = gen_image_mat(params);
+            redraw_image(window, black, cal, img, params);
+        elseif strcmp(keyname, 'j')|| strcmp(keyname, 'J')
+            params.img_height = params.img_height  - size_step;
+            img = gen_image_mat(params);
+            redraw_image(window, black, cal, img, params);
+            
+            
         else
             forward = 1;
         end
@@ -121,9 +158,10 @@ function redraw_image(window, black, cal, img, params)
     import stim.display_image
     params = gen_image_sequence(cal, params);
     xyY = [params.x params.y params.LUM];
-    showimg = gen_show_img(img, params.color_sequence, 2);
+    showimg = gen_show_img(img, params.color_sequence, params);
     a = num2str(round(xyY(1:2) * 1000) / 1000);
     b = num2str(round(xyY(3) * 1000) / 1000);
     display_image(window, black, showimg, a, b, 'xy', 'LUM');
     pause(0.2); % prevent 'sticky keys'
+    
 end

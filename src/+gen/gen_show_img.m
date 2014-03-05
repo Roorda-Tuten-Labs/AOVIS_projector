@@ -1,18 +1,19 @@
-function [showimg] = gen_show_img(img, color, ANNULUS)
+function [showimg] = gen_show_img(img, color, params)
 
 showimg = zeros(size(img));
-l_ = size(showimg, 1);
-c = l_ / 2;
-        
+[h, ~, ~] = size(showimg);
+c = h / 2;
+
 for k = 1:3
+
     % color
     showimg(:, :, k) = color(k) * img(:, :, k);
     % fixation
-    if ANNULUS == 1
+    if strcmp(params.stimulus_shape, 'annulus')
         % center of 6 deg annulus, i.e. 3 deg in each direction.
         showimg(c-1:c+1, c-1:c+1, k) = 0.5 * 0;
-    elseif ANNULUS == 0
+    else
         % 3 degs from edge of 2 deg circle
-        showimg(c:c+2, c+174:c+176, k) = 0.5 * 255;
+        showimg(c:c+2, c+250:c+252, k) = 0.5 * 255;
     end
 end
