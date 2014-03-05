@@ -1,4 +1,4 @@
-function xyz = show_stimulus(xyY, params)
+function xyz = show_stimulus(xyY, params, close_at_end)
 
 import gen.gen_image_sequence
 import gen.gen_image_mat
@@ -7,11 +7,16 @@ import stim.setup_window
 import stim.display_image
 import stim.cleanup
 
+if nargin < 3 && nargin > 1
+    close_at_end = 0;
+end
+
 if nargin < 1
-    xyY = input('xyY coordinate to display [default = 1/3 1/3 40]', 's');
+    xyY = input('xyY coordinate to display [default = 1/3 1/3 40]');
     if isempty(xyY)
-        xyY = [1/3 1/3 40]';
+        xyY = [1/3 1/3 40];
     end
+    close_at_end = 1;
 end
 if nargin < 2
     import gen.gen_params
@@ -61,6 +66,9 @@ try
         forward = process_keys(keyname);
         
     end
+    if close_at_end
+        cleanup();
+    end
 
 catch  %#ok<*CTCH>
    
@@ -71,6 +79,7 @@ catch  %#ok<*CTCH>
     
 end
 
+    % --- subroutines ---
     function redraw_image(window, black, cal, img, params)
         import gen.gen_image_sequence
         import gen.gen_show_img
