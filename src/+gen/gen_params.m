@@ -71,6 +71,9 @@ params.stimulus_shape = 'rectangle';
 
 params.psych_method = 'adjustment';
 
+params.fixation_offset_x = 200;
+params.fixation_offset_y = 0;
+
 params = gen_hue_specific_params(params.uniqueHue, params);
 
 end

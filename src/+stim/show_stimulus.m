@@ -132,9 +132,21 @@ try
             params.img_height = params.img_height  - size_step;
             img = gen_image_mat(params);
             redraw_image(window, black, cal, img, params);
+
+        elseif strcmp(keyname, 'w')|| strcmp(keyname, 'W')
+            params.fixation_offset_y = params.fixation_offset_y  - size_step;
+            redraw_image(window, black, cal, img, params);
+        elseif strcmp(keyname, 'z')|| strcmp(keyname, 'Z')
+            params.fixation_offset_y = params.fixation_offset_y  + size_step;
+            redraw_image(window, black, cal, img, params);
+        elseif strcmp(keyname, 'a')|| strcmp(keyname, 'A')
+            params.fixation_offset_x = params.fixation_offset_x  - size_step;
+            redraw_image(window, black, cal, img, params);
+        elseif strcmp(keyname, 's')|| strcmp(keyname, 'S')
+            params.fixation_offset_x = params.fixation_offset_x  + size_step;
+            redraw_image(window, black, cal, img, params);
             
-            
-        else
+        elseif strcmp(keyname, 'q')
             forward = 1;
         end
     end

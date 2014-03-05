@@ -58,8 +58,9 @@ if strcmp(params.psych_method, 'forced choice')
         psychrethrow(psychlasterror);
     end
 elseif strcmp(params.psych_method, 'adjustment')
-    import stim.show_stimulus
+    
     show_stimulus([0.3 0.3 40], params)
+    
 end
 
 % ---- Print xyz result for white
@@ -69,4 +70,3 @@ elseif strcmp(params.color_space, 'Luv')
     disp(xyz);
     disp(uvToxy(xyz(1:2)));
 end
-
