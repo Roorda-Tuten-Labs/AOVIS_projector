@@ -1,4 +1,4 @@
-function show_stimulus(xyY, params)
+function xyz = show_stimulus(xyY, params)
 
 import gen.gen_image_sequence
 import gen.gen_image_mat
@@ -146,13 +146,13 @@ try
             params.fixation_offset_x = params.fixation_offset_x  + size_step;
             redraw_image(window, black, cal, img, params);
             
-        elseif strcmp(keyname, 'q')
+        elseif strcmp(keyname, 'space')
+            xyz = xyYToXYZ([params.x params.y params.LUM]');
+            xyz = xyz / sum(xyz);
             forward = 1;
         end
     end
-    
-    % ---------- End the experiment and cleanup window --------
-    cleanup(oldVisualDebugLevel, oldSupressAllWarnings)
+
 
 catch  %#ok<*CTCH>
    

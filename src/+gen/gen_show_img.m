@@ -13,7 +13,7 @@ for k = 1:3
     % fixation
     if strcmp(params.stimulus_shape, 'annulus')
         % center of 6 deg annulus, i.e. 3 deg in each direction.
-        showimg(c-1:c+1, c-1:c+1, k) = 0.5 * 0;
+        showimg(center-1:center+1, center-1:center+1, k) = 0.5 * 0;
     else
         % 3 degs from edge of 2 deg circle
         showimg(y_loc:y_loc+3, x_loc:x_loc+3, k) = 0.5 * 255;

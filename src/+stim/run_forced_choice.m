@@ -1,5 +1,5 @@
-function [data_record, fit_params, xyz] = run_program(window, params, ...
-    close_at_end)
+function [data_record, fit_params, xyz] = run_forced_choice(window, ...
+    params, close_at_end)
 % uniqueHues
 %%% white computation (linear spacing) - less yellow bias.
 
