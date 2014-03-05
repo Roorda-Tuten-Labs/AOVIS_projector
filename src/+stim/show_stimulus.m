@@ -3,6 +3,7 @@ function xyz = show_stimulus(xyY, params)
 import gen.gen_image_sequence
 import gen.gen_image_mat
 import gen.gen_show_img
+import stim.setup_window
 import stim.display_image
 import stim.cleanup
 
@@ -13,17 +14,12 @@ if nargin < 1
     end
 end
 if nargin < 2
-    params = [];
+    import gen.gen_params
+    params = gen.gen_params();
 end
 
-xy_step = 0.0025;
-LUM_step = 2;
-off_step = 5;
-size_step = 2;
-cal_file = 'Feb13_2014a';
-
 % Load default calibration file:
-cal = LoadCalFile(cal_file);
+cal = LoadCalFile(params.cal_file);
 T_xyz1931 = csvread('ciexyz31.csv')';
 S_xyz1931 = [380, 5, 81];
 
@@ -47,46 +43,73 @@ params = gen_image_sequence(cal, params);
 img = gen_image_mat(params);
 
 try
-	% ---------- Window Setup ----------
-	% Supress checking behavior
-	oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-    oldSupressAllWarnings = Screen('Preference', 'SuppressAllWarnings', 1);
-   	%Screen('Preference', 'SkipSyncTests', 1);
-    % Find out how many screens and use largest screen number.
-    whichScreen = max(Screen('Screens'));
-    
-	% Hides the mouse cursor
-	HideCursor;
-	
-	% Opens a graphics window on the main monitor (screen 0).
-	window = Screen('OpenWindow', whichScreen);
-    LoadIdentityClut(window);
+	window = setup_window(params.screen);
     
     % Retrieves color codes for black and white and gray.
     black = BlackIndex(window);  % Retrieves the CLUT color code for black.
 
     showimg = gen_show_img(img, params.color_sequence, params);
     
-    a = num2str(round(xyY(1:2)' * 1000) / 1000);
-    b = num2str(round(xyY(3) * 1000) / 1000);
-    display_image(window, black, showimg, a, b, 'xy', 'LUM');
+    [a, b] = format_numbers(xyY);
+    
+    display_image(window, black, showimg, a, b, 'ab', 'LUM');
     
     forward = 0;
     while ~forward
         [~, keycode, ~] = KbWait();
         keyname = KbName(keycode);
+        forward = process_keys(keyname);
+        
+    end
+
+catch  %#ok<*CTCH>
+   
+	cleanup();
+
+	% We throw the error again so the user sees the error description.
+	psychrethrow(psychlasterror);
+    
+end
+
+    function redraw_image(window, black, cal, img, params)
+        import gen.gen_image_sequence
+        import gen.gen_show_img
+        import stim.display_image
+        params = gen_image_sequence(cal, params);
+        xyY = [params.x params.y params.LUM];
+        showimg_ = gen_show_img(img, params.color_sequence, params);
+        [a_, b_] = format_numbers(xyY);
+        display_image(window, black, showimg_, a_, b_, 'xy', 'LUM');
+        pause(0.2); % prevent 'sticky keys'
+
+    end
+
+    function [a, b] = format_numbers(abc)
+        a = num2str(round(abc(1:2) * 1000) / 1000);
+        b = num2str(round(abc(3) * 1000) / 1000);
+    end
+
+    function [forward] = process_keys(keyname)
+        import gen.gen_image_mat
+
+        xy_step = 0.0025;
+        LUM_step = 2;
+        off_step = 5;
+        size_step = 2;
+        forward = 0;
+        
         if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
             params.x = params.x - xy_step;
             redraw_image(window, black, cal, img, params);
-            
+
         elseif strcmp(keyname, 'RightArrow')|| strcmp(keyname, 'right')
             params.x = params.x + xy_step;
             redraw_image(window, black, cal, img, params);
-            
+
         elseif strcmp(keyname, 'UpArrow')|| strcmp(keyname, 'up')
             params.y = params.y + xy_step;
             redraw_image(window, black, cal, img, params);
-            
+
         elseif strcmp(keyname, 'DownArrow')|| strcmp(keyname, 'down')
             params.y = params.y - xy_step;
             redraw_image(window, black, cal, img, params);
@@ -94,11 +117,11 @@ try
         elseif strcmp(keyname, 'Return')|| strcmp(keyname, 'ENTER')
             params.LUM = params.LUM + LUM_step;
             redraw_image(window, black, cal, img, params);
-            
+
         elseif strcmp(keyname, 'RightShift')|| strcmp(keyname, 'shift')
             params.LUM = params.LUM - LUM_step;
             redraw_image(window, black, cal, img, params);
-            
+
         elseif strcmp(keyname, 'f')|| strcmp(keyname, 'F')
             params.img_offset_width = params.img_offset_width  - off_step;
             img = gen_image_mat(params);
@@ -145,35 +168,20 @@ try
         elseif strcmp(keyname, 's')|| strcmp(keyname, 'S')
             params.fixation_offset_x = params.fixation_offset_x  + size_step;
             redraw_image(window, black, cal, img, params);
-            
+
         elseif strcmp(keyname, 'space')
-            xyz = xyYToXYZ([params.x params.y params.LUM]');
-            xyz = xyz / sum(xyz);
+            % ---- Print xyz result for white
+            if strcmp(params.color_space, 'xyY')
+                xyz = xyYToXYZ([params.x params.y params.LUM]');
+                disp('xyz:');
+                xyz = xyz / sum(xyz);
+            elseif strcmp(params.color_space, 'Luv')
+                xy = uvToxy([params.x params.y]');
+                xyz = xyYToXYZ([xy(1) xy(2) params.LUM]');
+                xyz = xyz / sum(xyz);
+            end 
             forward = 1;
         end
     end
 
-
-catch  %#ok<*CTCH>
-   
-	cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
-
-	% We throw the error again so the user sees the error description.
-	psychrethrow(psychlasterror);
-    
-end
-end
-
-function redraw_image(window, black, cal, img, params)
-    import gen.gen_image_sequence
-    import gen.gen_show_img
-    import stim.display_image
-    params = gen_image_sequence(cal, params);
-    xyY = [params.x params.y params.LUM];
-    showimg = gen_show_img(img, params.color_sequence, params);
-    a = num2str(round(xyY(1:2) * 1000) / 1000);
-    b = num2str(round(xyY(3) * 1000) / 1000);
-    display_image(window, black, showimg, a, b, 'xy', 'LUM');
-    pause(0.2); % prevent 'sticky keys'
-    
 end

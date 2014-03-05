@@ -12,7 +12,6 @@ function display_image(window, black, showimg, left, right, left_text, ...
         num_of_print = 2;
     end
 
-    
     % ---------- Image Display ---------- 
     % Colors the entire window gray.
     Screen('FillRect', window, black);

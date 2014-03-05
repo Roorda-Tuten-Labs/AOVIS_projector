@@ -16,6 +16,6 @@ for k = 1:3
         showimg(center-1:center+1, center-1:center+1, k) = 0.5 * 0;
     else
         % 3 degs from edge of 2 deg circle
-        showimg(y_loc:y_loc+3, x_loc:x_loc+3, k) = 0.5 * 255;
+        showimg(y_loc:y_loc+5, x_loc:x_loc+5, k) = 0.65 * 255;
     end
 end

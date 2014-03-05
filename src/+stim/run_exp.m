@@ -36,15 +36,14 @@ if strcmp(params.psych_method, 'forced choice')
     end
 
 elseif strcmp(params.psych_method, 'adjustment')
-
+    data_record = zeros(params.ntrials, 5);
+    
     xyz = show_stimulus([0.2 0.5 50], params);
     
 end
 
 % ---- Print xyz result for white
-if strcmp(params.color_space, 'xyY')
-    disp(xyz);
-elseif strcmp(params.color_space, 'Luv')
-    disp(xyz);
-    disp(uvToxy(xyz(1:2)));
-end
+disp('xyz:')
+disp(xyz);
+disp('uv:');
+disp(xyTouv(xyz(1:2)));
