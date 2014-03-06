@@ -107,6 +107,10 @@ end
         size_step = 10;
         forward = 0;
         
+        if length(keyname) == 2 % handle case of shift on windows
+            keyname = keyname(2);
+        end
+        
         if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
             params.x = params.x - xy_step;
             redraw_image(window, black, cal, img, params);
@@ -123,11 +127,11 @@ end
             params.y = params.y - xy_step;
             redraw_image(window, black, cal, img, params);
 
-        elseif strcmp(keyname, 'Return')|| strcmp(keyname, 'ENTER')
+        elseif strcmp(keyname, 'Return')|| strcmp(keyname, 'return')
             params.LUM = params.LUM + LUM_step;
             redraw_image(window, black, cal, img, params);
 
-        elseif strcmp(keyname, 'RightShift')|| strcmp(keyname, 'shift')
+        elseif strcmp(keyname, 'RightShift')|| strcmp(keyname, 'right_shift')
             params.LUM = params.LUM - LUM_step;
             redraw_image(window, black, cal, img, params);
 
