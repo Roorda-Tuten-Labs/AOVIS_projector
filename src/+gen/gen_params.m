@@ -25,11 +25,11 @@ params.constant_stim = 1;
 
 params.cal_file = 'Feb13_2014a';
 params.pause_time = 1.0; % in sec
-params.screen = 0; % which screen to display.
+params.screen = 1; % which screen to display.
 
 % ---------- Color Setup ----------
 % Gets color values.
-params.LUM = 60;
+params.LUM = 9;
 params.ncolors = 10; 
 params.nrepeats = 10;
 
@@ -61,17 +61,17 @@ end
 [params.pixel_width, params.pixel_height] = Screen('WindowSize', ...
     params.screen);
 
-params.img_width = 200;
-params.img_height = 300;
+params.img_width = 220;
+params.img_height = 190;
 
-params.img_offset_width = 0;
-params.img_offset_height = 0;
+params.img_offset_width = 328;
+params.img_offset_height = 234;
 
 params.stimulus_shape = 'rectangle';
 
 params.psych_method = 'adjustment';
 
-params.fixation_offset_x = 200;
+params.fixation_offset_x = 0;
 params.fixation_offset_y = 0;
 
 params = gen_hue_specific_params(params.uniqueHue, params);

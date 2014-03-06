@@ -69,7 +69,7 @@ try
     if close_at_end
         cleanup();
     end
-
+    disp(params);
 catch  %#ok<*CTCH>
    
 	cleanup();
@@ -101,10 +101,10 @@ end
     function [forward] = process_keys(keyname)
         import gen.gen_image_mat
 
-        xy_step = 0.0025;
-        LUM_step = 2;
-        off_step = 5;
-        size_step = 2;
+        xy_step = 0.015;
+        LUM_step = 1;
+        off_step = 7;
+        size_step = 10;
         forward = 0;
         
         if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
@@ -166,16 +166,16 @@ end
             redraw_image(window, black, cal, img, params);
 
         elseif strcmp(keyname, 'w')|| strcmp(keyname, 'W')
-            params.fixation_offset_y = params.fixation_offset_y  - size_step;
+            params.fixation_offset_y = params.fixation_offset_y  - size_step * 4;
             redraw_image(window, black, cal, img, params);
         elseif strcmp(keyname, 'z')|| strcmp(keyname, 'Z')
-            params.fixation_offset_y = params.fixation_offset_y  + size_step;
+            params.fixation_offset_y = params.fixation_offset_y  + size_step * 4;
             redraw_image(window, black, cal, img, params);
         elseif strcmp(keyname, 'a')|| strcmp(keyname, 'A')
-            params.fixation_offset_x = params.fixation_offset_x  - size_step;
+            params.fixation_offset_x = params.fixation_offset_x  - size_step * 4;
             redraw_image(window, black, cal, img, params);
         elseif strcmp(keyname, 's')|| strcmp(keyname, 'S')
-            params.fixation_offset_x = params.fixation_offset_x  + size_step;
+            params.fixation_offset_x = params.fixation_offset_x  + size_step * 4;
             redraw_image(window, black, cal, img, params);
 
         elseif strcmp(keyname, 'space')

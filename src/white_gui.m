@@ -235,8 +235,8 @@ function params = white_gui(params)
         [params.pixel_width, params.pixel_height] = Screen('WindowSize', ...
             params.screen);
 
-        params.img_offset_width = 0;
-        params.img_offset_height = 100;
+        %params.img_offset_width = 0;
+        %params.img_offset_height = 100;
         
         params.comment = comment;
     end

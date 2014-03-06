@@ -38,7 +38,7 @@ if strcmp(params.psych_method, 'forced choice')
 elseif strcmp(params.psych_method, 'adjustment')
     data_record = zeros(params.ntrials, 5);
     
-    xyz = show_stimulus([0.2 0.5 50], params);
+    xyz = show_stimulus([0.1825 0.3225 params.LUM], params, 0);
     
 end
 
