@@ -25,7 +25,7 @@ params.constant_stim = 1;
 
 params.cal_file = 'Feb13_2014a';
 params.pause_time = 1.0; % in sec
-params.screen = 1; % which screen to display.
+params.screen = 0; % which screen to display.
 
 % ---------- Color Setup ----------
 % Gets color values.
