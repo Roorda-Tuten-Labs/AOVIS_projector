@@ -106,11 +106,13 @@ end
         off_step = 7;
         size_step = 10;
         forward = 0;
-        
-        if length(keyname) == 2 % handle case of shift on windows
-            keyname = keyname(2);
+        % handle case of shift on windows
+        if length(keyname) == 2
+            if strcmp(keyname(2), 'right_shift')
+                keyname = keyname(2);
+            end
         end
-        
+        disp(keyname);
         if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
             params.x = params.x - xy_step;
             redraw_image(window, black, cal, img, params);
