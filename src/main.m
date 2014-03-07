@@ -1,8 +1,6 @@
 %%% unique white
 clear all; close all;
 %%% To Do:
-%%% compute angle of fixation programmatically
-%%% add in method of adjustment option, use Luv space.
 %%% add in offset term.
 %%% compute chromatic angle in DLK space 
 %%% compute dominant wavelength
@@ -11,8 +9,7 @@ clear all; close all;
 import fil.add_depend
 import gen.gen_params
 import fil.check_for_data_dir
-import stim.run_exp
-import stim.cleanup
+import exp.run_exp
 
 % ---- Add external dependencies to path
 add_depend();
@@ -27,5 +24,3 @@ params = white_gui(params);
 check_for_data_dir(params.subject);
 
 run_exp(params);
-
-cleanup();

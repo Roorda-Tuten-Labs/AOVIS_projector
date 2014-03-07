@@ -1,4 +1,4 @@
-function [data_record, fit_params, xyz] = run_forced_choice(window, ...
+function [data_record, fit_params, xyz] = forced_choice_trial(window, ...
     params, close_at_end)
 % uniqueHues
 %%% white computation (linear spacing) - less yellow bias.
@@ -14,8 +14,8 @@ import gen.gen_image_sequence
 import stim.display_image
 import stim.show_stimulus
 import stim.cleanup
-import stim.get_key_input
 import stim.display_black_screen
+import exp.get_key_input
 import fit.fit_gaussian
 import comp.mean_angle_to_xyz
 import plot.plot_data

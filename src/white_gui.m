@@ -235,8 +235,10 @@ function params = white_gui(params)
         [params.pixel_width, params.pixel_height] = Screen('WindowSize', ...
             params.screen);
 
-        %params.img_offset_width = 0;
-        %params.img_offset_height = 100;
+        if ~strcmp(params.psych_method, 'adjustment')
+            params.img_offset_width = 0;
+            params.img_offset_height = 0;
+        end
         
         params.comment = comment;
     end

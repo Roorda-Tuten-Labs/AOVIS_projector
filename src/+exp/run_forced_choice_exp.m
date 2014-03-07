@@ -1,8 +1,8 @@
-function [params, xyz] = show_stimulus_set(window, params, hue)
+function [params, xyz] = run_forced_choice_exp(window, params, hue)
     % import local files
     import gen.gen_hue_specific_params
     import stim.show_text
-    import stim.run_forced_choice
+    import exp.forced_choice_trial
     import fil.save_to_file
     
     % update hue specific parameters
@@ -21,7 +21,7 @@ function [params, xyz] = show_stimulus_set(window, params, hue)
     pause(0.2); 
     
     % run the program
-    [data_record, hue_angle, abc] = run_forced_choice(window, params);
+    [data_record, hue_angle, abc] = forced_choice_trial(window, params);
     
     % record the blue and yellow angles for use with white later
     if strcmp(hue, 'blue')

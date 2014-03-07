@@ -2,30 +2,32 @@ function run_exp(params)
 
 import gen.gen_hue_order
 import fil.check_for_data_dir
+import exp.run_forced_choice_exp
+import exp.run_adjustment_exp
 import stim.setup_window
-import stim.show_stimulus_set
 import stim.show_stimulus
 import stim.cleanup
 
+% ---- Set up window
+[window, oldVisualDebugLevel, oldSupressAllWarnings] = setup_window(...
+    params.screen);
+    
 if strcmp(params.psych_method, 'forced choice')
-    % ---- Set up window
-    [window, oldVisualDebugLevel, oldSupressAllWarnings] = setup_window(...
-        params.screen);
 
     % ---- Randomize the order of blue, yellow settings.
     [first, second] = gen_hue_order();
     try
         % ---- Present first set of stimuli
-        [params, ~] = show_stimulus_set(window, params, first);
+        [params, ~] = run_forced_choice_exp(window, params, first);
 
         % ---- Present second set of stimuli
-        [params, ~] = show_stimulus_set(window, params, second);
+        [params, ~] = run_forced_choice_exp(window, params, second);
 
         % ---- Present achromatic stimuli
-        [params, xyz] = show_stimulus_set(window, params, 'white');
+        [params, xyz] = run_forced_choice_exp(window, params, 'white');
 
         % ---- Show final stimulus
-        show_stimulus([xyz(1) xyz(2) params.LUM]', params);
+        show_stimulus([xyz(1) xyz(2) params.LUM]', params, window, 0);
 
         cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
 
@@ -36,14 +38,13 @@ if strcmp(params.psych_method, 'forced choice')
     end
 
 elseif strcmp(params.psych_method, 'adjustment')
-    data_record = zeros(params.ntrials, 5);
     
-    xyz = show_stimulus([0.1825 0.3225 params.LUM], params, 0);
-    
+    [params, xyz] = run_adjustment_exp(window, params);
+        
 end
 
 % ---- Print xyz result for white
-disp('xyz:')
-disp(xyz);
-disp('uv:');
-disp(xyTouv(xyz(1:2)));
+disp(params);
+disp('Lum:'); disp(params.LUM);
+disp('xyz:'); disp(xyz);
+disp('uv:'); disp(xyTouv(xyz(1:2)));

@@ -1,15 +1,10 @@
-function xyz = show_stimulus(xyY, params, close_at_end)
+function xyz = show_stimulus(xyY, params, window, close_at_end, cal)
 
 import gen.gen_image_sequence
 import gen.gen_image_mat
 import gen.gen_show_img
-import stim.setup_window
 import stim.display_image
 import stim.cleanup
-
-if nargin < 3 && nargin > 1
-    close_at_end = 0;
-end
 
 if nargin < 1
     xyY = input('xyY coordinate to display [default = 1/3 1/3 40]');
@@ -20,17 +15,26 @@ if nargin < 1
 end
 if nargin < 2
     import gen.gen_params
-    params = gen.gen_params();
+    params = gen_params();
+end
+if nargin < 3
+    import stim.setup_window
+    window = setup_window(params.screen);
+end
+if nargin < 4 && nargin > 1
+    close_at_end = 0;
+end
+if nargin < 5
+    % Load default calibration file:
+    cal = LoadCalFile(params.cal_file);
+    T_xyz1931 = csvread('ciexyz31.csv')';
+    S_xyz1931 = [380, 5, 81];
+
+    T_xyz1931 = 683 * T_xyz1931;
+    cal = SetSensorColorSpace(cal, T_xyz1931, S_xyz1931);
+    cal = SetGammaMethod(cal,0);
 end
 
-% Load default calibration file:
-cal = LoadCalFile(params.cal_file);
-T_xyz1931 = csvread('ciexyz31.csv')';
-S_xyz1931 = [380, 5, 81];
-
-T_xyz1931 = 683 * T_xyz1931;
-cal = SetSensorColorSpace(cal, T_xyz1931, S_xyz1931);
-cal = SetGammaMethod(cal,0);
 
 % ---------- Gen image sequence --------
 params.ntrials = 1;
@@ -47,9 +51,7 @@ params = gen_image_sequence(cal, params);
 % Stores the image in a three dimensional matrix.
 img = gen_image_mat(params);
 
-try
-	window = setup_window(params.screen);
-    
+try 
     % Retrieves color codes for black and white and gray.
     black = BlackIndex(window);  % Retrieves the CLUT color code for black.
 
@@ -69,7 +71,7 @@ try
     if close_at_end
         cleanup();
     end
-    disp(params);
+
 catch  %#ok<*CTCH>
    
 	cleanup();
@@ -178,11 +180,13 @@ end
             params.fixation_offset_x = params.fixation_offset_x  + size_step * 4;
             redraw_image(window, black, cal, img, params);
 
+        elseif strcmp(keyname, 'ESCAPE')|| strcmp(keyname, 'escape')
+            forward = 1;
+            
         elseif strcmp(keyname, 'space')
-            % ---- Print xyz result for white
+            % ---- Compute xyz result for white
             if strcmp(params.color_space, 'xyY')
                 xyz = xyYToXYZ([params.x params.y params.LUM]');
-                disp('xyz:');
                 xyz = xyz / sum(xyz);
             elseif strcmp(params.color_space, 'Luv')
                 xy = uvToxy([params.x params.y]');
