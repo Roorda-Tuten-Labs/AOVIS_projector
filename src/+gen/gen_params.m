@@ -29,7 +29,7 @@ params.screen = 0; % which screen to display.
 
 % ---------- Color Setup ----------
 % Gets color values.
-params.LUM = 9;
+params.LUM = 10;
 params.ncolors = 10; 
 params.nrepeats = 10;
 
@@ -68,7 +68,6 @@ params.img_offset_width = 328;
 params.img_offset_height = 234;
 
 params.stimulus_shape = 'rectangle';
-
 params.psych_method = 'adjustment';
 
 params.fixation_offset_x = 0;

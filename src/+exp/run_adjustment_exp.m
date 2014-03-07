@@ -2,8 +2,10 @@ function [params, xyz] = run_adjustment_exp(window, params)
     import stim.show_stimulus
     import stim.display_black_screen
     import stim.cleanup
+    import stim.show_text
     import gen.gen_image_mat
     import fil.save_to_file
+    import convert.CIE_from_Angle
     
     data_record = zeros(params.nrepeats, 3);
     try
@@ -12,7 +14,11 @@ function [params, xyz] = run_adjustment_exp(window, params)
         
         for i=1:params.nrepeats
             %%% choose a new random starting point each time.
-            xyz = show_stimulus([0.1825 0.3225 params.LUM], params, ...
+            angle = Randi(360);
+            [a, b] = CIE_from_Angle(angle, params.RHO, ...
+                params.color_space);
+            
+            xyz = show_stimulus([a b params.LUM], params, ...
                 window, 0);
             data_record(i, :) = xyz;
             
@@ -20,8 +26,20 @@ function [params, xyz] = run_adjustment_exp(window, params)
             
             pause(1);
         end
-        cleanup();
+        % ---- indicate program is complete
+        show_text(window, 'finish', '', 40);
+        pause(4);
+        
+        % ---- show final gray point ----
+        disp('SEM:'); disp(std(data_record, 1) / sqrt(params.nrepeats));
         xyz = mean(data_record, 1)';
+        xyY = XYZToxyY(xyz);
+        uv = xyTouv([xyY(1) xyY(2)]');
+        show_stimulus([uv(1) uv(2) params.LUM], params, window, 0);
+        KbWait();
+        
+        % ---- cleanup ----
+        cleanup();
         
     catch  %#ok<*CTCH>
         cleanup();

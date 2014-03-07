@@ -103,18 +103,18 @@ end
     function [forward] = process_keys(keyname)
         import gen.gen_image_mat
 
-        xy_step = 0.015;
+        xy_step = 0.005;
         LUM_step = 1;
         off_step = 7;
-        size_step = 10;
+        size_step = 5;
         forward = 0;
-        % handle case of shift on windows
+        % handle case of shift on windows OS
         if length(keyname) == 2
             if strcmp(keyname(2), 'right_shift')
                 keyname = keyname(2);
             end
         end
-        disp(keyname);
+        
         if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
             params.x = params.x - xy_step;
             redraw_image(window, black, cal, img, params);
