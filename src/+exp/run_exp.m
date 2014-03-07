@@ -44,7 +44,6 @@ elseif strcmp(params.psych_method, 'adjustment')
 end
 
 % ---- Print xyz result for white
-disp(params);
 disp('Lum:'); disp(params.LUM);
 disp('xyz:'); disp(xyz);
 disp('uv:'); disp(xyTouv(xyz(1:2)));
