@@ -1,3 +1,4 @@
+calibration_file_name = 'data/roorda_march4_2014_raw_data.csv';
 % Create calibration structure;
 cal = [];
 
@@ -21,7 +22,7 @@ cal.manual.photometer = 1;
 
 % Prompt for background values.  The default is a guess as to what
 % produces one-half of maximum output for a typical CRT.
-defBgColor = [190 190 190]'/255;
+defBgColor = [190 190 190]' / 255;
 thePrompt = sprintf(...
 'Enter RGB values for background (range 0-1) as a row vector [%0.3f %0.3f %0.3f]: ',...
                     defBgColor(1), defBgColor(2), defBgColor(3));
@@ -84,7 +85,7 @@ end
 cal.describe.gamma.fitType = 'cubic interpolation';
 
 
-cal_data = csvread('cal/calibration_raw_data.csv');
+cal_data = csvread(calibration_file_name);
 cal.describe.nMeas = 16;
 
 % ---- Subtract off ambient light from each measurment
@@ -156,36 +157,5 @@ cal.gammaTable = [r_table g_table b_table];
 fprintf(1, '\nSaving to %s.mat\n', newFileName);
 SaveCalFile(cal, newFileName);
     
-%
-% cal.P_device = csvread('cal/P_device.csv');
-% cal.S_device = [380, 1, 401];
-% cal.T_device = eye(length(cal.P_device));
-
-figure(1); clf;
-plot(SToWls(cal.S_device), cal.P_device, 'LineWidth', 2.5);
-xlabel('Wavelength (nm)', 'FontSize', 20);
-ylabel('Power',  'FontSize', 20);
-title('Phosphor spectra', 'Fontsize', 20, 'Fontname', 'helvetica');
-axis([380, 780, -Inf, Inf]);
-set(gca,'fontsize', 20, 'linewidth', 1, 'TickDir', 'out', ...
-    'TickLength', [0.05 0.0]);
-box off;
-
-figure(2); clf;
-plot(cal.rawdata.rawGammaInput, cal.rawdata.rawGammaTable, '+', ...
-    'MarkerSize', 20);
-xlabel('Input value', 'FontSize', 20);
-ylabel('Normalized output', 'FontSize', 20);
-title('Gamma functions', 'Fontsize', 20, 'Fontname', 'helvetica');
-hold on
-plot(cal.gammaInput, cal.gammaTable, 'LineWidth', 2);
-hold off
-figure(gcf);
-set(gca,'fontsize', 20, 'linewidth', 1, 'TickDir', 'out', ...
-    'TickLength', [0.05 0.0]);
-xlim([-0.05 1.05]);
-ylim([-0.05 1.05]);
-box off;
-drawnow;
-
+plot_cal_data(cal);
 
