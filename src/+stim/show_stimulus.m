@@ -35,6 +35,7 @@ if nargin < 5
     cal = SetGammaMethod(cal,0);
 end
 
+KbName('UnifyKeyNames');
 
 % ---------- Gen image sequence --------
 params.ntrials = 1;

@@ -8,6 +8,8 @@ import stim.setup_window
 import stim.show_stimulus
 import stim.cleanup
 
+KbName('UnifyKeyNames');
+
 % ---- Set up window
 [window, oldVisualDebugLevel, oldSupressAllWarnings] = setup_window(...
     params.screen);

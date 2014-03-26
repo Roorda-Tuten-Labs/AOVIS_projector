@@ -40,7 +40,6 @@ plot(gun_xyz(:, 1), gun_xyz(:, 2), 'k--', 'LineWidth', 2.5);
 plot([gun_xyz(1, 1) gun_xyz(3, 1)], ...
     [gun_xyz(1, 2) gun_xyz(3, 2)], 'k--', 'LineWidth', 2.5);
     
-    
 axis square
 xlim([0, 0.9]);
 ylim([0, 0.9]);
