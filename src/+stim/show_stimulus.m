@@ -1,4 +1,4 @@
-function xyz = show_stimulus(xyY, params, window, close_at_end, cal)
+function [xyz, params] = show_stimulus(xyY, params, window, close_at_end, cal)
 
 import gen.gen_image_sequence
 import gen.gen_image_mat
@@ -104,7 +104,7 @@ end
     function [forward] = process_keys(keyname)
         import gen.gen_image_mat
 
-        xy_step = 0.005;
+        xy_step = 0.0025;
         LUM_step = 1;
         off_step = 7;
         size_step = 5;
@@ -113,6 +113,8 @@ end
         if length(keyname) == 2
             if strcmp(keyname(2), 'right_shift')
                 keyname = keyname(2);
+            else
+                keyname = keyname(1);
             end
         end
         
@@ -136,7 +138,7 @@ end
             params.LUM = params.LUM + LUM_step;
             redraw_image(window, black, cal, img, params);
 
-        elseif strcmp(keyname, 'RightShift')|| strcmp(keyname, 'right_shift')
+        elseif strcmp(keyname, 'Shift')|| strcmp(keyname, 'right_shift')
             params.LUM = params.LUM - LUM_step;
             redraw_image(window, black, cal, img, params);
 
