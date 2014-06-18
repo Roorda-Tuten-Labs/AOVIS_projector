@@ -1,6 +1,5 @@
 function [data_record] = get_key_input(cal, data_record, params, trial)
 
-    import gen.gen_show_img
     import stim.cleanup
     import stim.display_image
 

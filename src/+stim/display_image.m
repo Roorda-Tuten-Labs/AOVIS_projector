@@ -1,13 +1,13 @@
-function display_image(window, black, params, left, right, left_text, ...
-    right_text)
+function display_image(window, black, params, color, left, right, ... 
+    left_text, right_text)
 
-    if nargin < 6
+    if nargin < 7
         left_text = 'left';
     end
-    if nargin < 7
+    if nargin < 8
         right_text = 'right';
     end
-    if nargin < 5
+    if nargin < 6
         num_of_print = 1;
     else 
         num_of_print = 2;
@@ -29,7 +29,6 @@ function display_image(window, black, params, left, right, left_text, ...
     rect = [0, 0, params.img_x, params.img_y];
     rect = CenterRectOnPoint(rect, params.img_offset_x, ...
         params.img_offset_y);
-    color = params.color_sequence(1, 1:3);
     
     if strcmp(params.stimulus_shape, 'circle')
         Screen('FillOval', window, color, rect);
