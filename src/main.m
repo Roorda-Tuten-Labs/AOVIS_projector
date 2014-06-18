@@ -1,9 +1,14 @@
 %%% unique white
 clear all; close all;
+
 %%% To Do:
 %%% add in offset term.
-%%% compute chromatic angle in DLK space 
 %%% compute dominant wavelength
+%%% Textures
+%%% inverted sine wave
+%%% background -- use rect instead of big matrix
+%%% turn cie text off during trials (check box)
+%%% better error handling
 
 % ---- Import local files
 import fil.add_depend

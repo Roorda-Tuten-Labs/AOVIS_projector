@@ -55,12 +55,12 @@ img = gen_image_mat(params);
 try 
     % Retrieves color codes for black and white and gray.
     black = BlackIndex(window);  % Retrieves the CLUT color code for black.
-
-    showimg = gen_show_img(img, params.color_sequence, params);
+    
+    % showimg = gen_show_img(img, params.color_sequence, params);
     
     [a, b] = format_numbers(xyY);
     
-    display_image(window, black, showimg, a, b, 'ab', 'LUM');
+    display_image(window, black, params, a, b, 'ab', 'LUM');
     
     forward = 0;
     while ~forward
@@ -89,9 +89,9 @@ end
         import stim.display_image
         params = gen_image_sequence(cal, params);
         xyY = [params.x params.y params.LUM];
-        showimg_ = gen_show_img(img, params.color_sequence, params);
+        %showimg_ = gen_show_img(img, params.color_sequence, params);
         [a_, b_] = format_numbers(xyY);
-        display_image(window, black, showimg_, a_, b_, 'xy', 'LUM');
+        display_image(window, black, params, a_, b_, 'xy', 'LUM');
         pause(0.2); % prevent 'sticky keys'
 
     end
@@ -143,36 +143,36 @@ end
             redraw_image(window, black, cal, img, params);
 
         elseif strcmp(keyname, 'f')|| strcmp(keyname, 'F')
-            params.img_offset_width = params.img_offset_width  - off_step;
+            params.img_offset_x = params.img_offset_x  - off_step;
             img = gen_image_mat(params);
             redraw_image(window, black, cal, img, params);
         elseif strcmp(keyname, 'g')|| strcmp(keyname, 'G')
-            params.img_offset_width = params.img_offset_width  + off_step;
+            params.img_offset_x = params.img_offset_x  + off_step;
             img = gen_image_mat(params);
             redraw_image(window, black, cal, img, params);
         elseif strcmp(keyname, 'v')|| strcmp(keyname, 'V')
-            params.img_offset_height = params.img_offset_height  + off_step;
+            params.img_offset_y = params.img_offset_y  + off_step;
             img = gen_image_mat(params);
             redraw_image(window, black, cal, img, params);
         elseif strcmp(keyname, 't')|| strcmp(keyname, 'T')
-            params.img_offset_height = params.img_offset_height  - off_step;
+            params.img_offset_y = params.img_offset_y  - off_step;
             img = gen_image_mat(params);
             redraw_image(window, black, cal, img, params);
 
         elseif strcmp(keyname, 'u')|| strcmp(keyname, 'U')
-            params.img_width = params.img_width  - size_step;
+            params.img_x = params.img_x  - size_step;
             img = gen_image_mat(params);
             redraw_image(window, black, cal, img, params);
         elseif strcmp(keyname, 'n')|| strcmp(keyname, 'N')
-            params.img_width = params.img_width  + size_step;
+            params.img_x = params.img_x  + size_step;
             img = gen_image_mat(params);
             redraw_image(window, black, cal, img, params);
         elseif strcmp(keyname, 'h')|| strcmp(keyname, 'H')
-            params.img_height = params.img_height  + size_step;
+            params.img_y = params.img_y  + size_step;
             img = gen_image_mat(params);
             redraw_image(window, black, cal, img, params);
         elseif strcmp(keyname, 'j')|| strcmp(keyname, 'J')
-            params.img_height = params.img_height  - size_step;
+            params.img_y = params.img_y  - size_step;
             img = gen_image_mat(params);
             redraw_image(window, black, cal, img, params);
 
@@ -190,7 +190,10 @@ end
             redraw_image(window, black, cal, img, params);
 
         elseif strcmp(keyname, 'ESCAPE')|| strcmp(keyname, 'escape')
+            xyz = NaN;
             forward = 1;
+            import stim.cleanup
+            cleanup(window);
             
         elseif strcmp(keyname, 'space')
             % ---- Compute xyz result for white

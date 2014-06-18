@@ -3,16 +3,14 @@ function [params, xyz] = run_adjustment_exp(window, params)
     import stim.display_black_screen
     import stim.cleanup
     import stim.show_text
-    import gen.gen_image_mat
     import fil.save_to_file
     import convert.CIE_from_Angle
     import plot.plot_method_of_adjustment
     
     data_record = zeros(params.nrepeats, 3);
     try
-        img = gen_image_mat(params);
         black = BlackIndex(window);
-        
+  
         for i=1:params.nrepeats
             %%% choose a new random starting point each time.
             angle = Randi(360);
@@ -23,7 +21,7 @@ function [params, xyz] = run_adjustment_exp(window, params)
                 window, 0);
             data_record(i, 1:3) = xyz;
             
-            display_black_screen(window, black, img, params);
+            display_black_screen(window, black);
             
             pause(1);
         end

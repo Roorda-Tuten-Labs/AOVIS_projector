@@ -1,12 +1,7 @@
-function display_black_screen(window, black, img, params)
+function display_black_screen(window, black)   
+    % Show black screen in between stim presentations
     
-    import gen.gen_show_img
-    import stim.display_image
+    Screen('FillRect', window, black);
+    Screen('Flip', window);
     
-    % ---------- Show black screen in between stim 
-    % presentations
-    showimg = gen_show_img(img, [0 0 0], params);
-    display_image(window, black, showimg, ...
-        params.left, params.right)
-
 end

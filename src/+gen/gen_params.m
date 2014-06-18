@@ -61,17 +61,17 @@ end
 [params.pixel_width, params.pixel_height] = Screen('WindowSize', ...
     params.screen);
 
-params.img_width = 220;
-params.img_height = 190;
+params.img_x = 220;
+params.img_y = 190;
 
-params.img_offset_width = 328;
-params.img_offset_height = 234;
+params.img_offset_x = 328;
+params.img_offset_y = 234;
 
 params.stimulus_shape = 'rectangle';
 params.psych_method = 'adjustment';
 
-params.fixation_offset_x = 0;
-params.fixation_offset_y = 0;
+params.fixation_offset_x = params.pixel_width / 2; % center it
+params.fixation_offset_y = params.pixel_height / 2; % center it
 
 params = gen_hue_specific_params(params.uniqueHue, params);
 
