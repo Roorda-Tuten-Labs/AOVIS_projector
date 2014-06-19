@@ -19,9 +19,13 @@ function [params, xyz] = run_adjustment_exp(window, params)
             data_record(i, 4:5) = [a, b]; % record starting position
             [xyz, params] = show_stimulus([a b params.LUM], params, ...
                 window, 0);
+            
+            if strcmp(xyz, 'end')
+                return;
+            end
             data_record(i, 1:3) = xyz;
             
-            display_black_screen(window, black);
+            display_black_screen(window, black, params);
             
             pause(1);
         end

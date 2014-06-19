@@ -39,36 +39,42 @@ cal = SetGammaMethod(cal,0);
 params = gen_image_sequence(cal, params);
 
 try 
-    % Retrieves the CLUT color code for black.
-    black = BlackIndex(window);  
+    % Retrieves the CLUT color code for background.
+    background = params.background;  
     
     % ---------- Run the experiment --------
     data_record = zeros(params.ntrials, 5);
     for trial=1:params.ntrials
         
         % 1. display image
-        display_image(window, black, params, ...
+        display_image(window, background, params, ...
             params.color_sequence(trial, 1:3), params.left, params.right);
         
         % 2. either present flash or constant stimulus
         if params.constant_stim
             % 2a. get user input
             data_record = get_key_input(cal, data_record, params, trial);
-
-            % 2b. show a black screen in between trials
-            display_black_screen(window, black, params);
+            if strcmp(data_record, 'end')
+                fit_params = 'end'; xyz = 'end'; return;
+            end
             
-            % 2c. keep black screen up for length of pause time
+            % 2b. show a background screen in between trials
+            display_black_screen(window, background, params);
+            
+            % 2c. keep background screen up for length of pause time
             pause(params.pause_time);
         else
             % 2a. keep stim up for length of pause time
             pause(params.pause_time);
             
-            % 2b. show a black screen in between trials
-            display_black_screen(window, black, params);
+            % 2b. show a background screen in between trials
+            display_black_screen(window, background, params);
             
-            % 2c. show black until user input received.
+            % 2c. show background until user input received.
             data_record = get_key_input(cal, data_record, params, trial);
+            if strcmp(data_record, 'end')
+                fit_params = 'end'; xyz = 'end'; return;
+            end
         end
         
     end

@@ -27,10 +27,11 @@ function [data_record] = get_key_input(cal, data_record, params, trial)
 
             keyisdown = 1; % Cause while loop to end
 
-        elseif strcmp(keyname, 'q')
-            % ---------- Exit program if 'q' key is pressed.
+        elseif strcmp(keyname, 'ESCAPE')|| strcmp(keyname, 'escape')
+            % ---------- Exit program if 'escape' key is pressed.
             cleanup();
             keyisdown = 1;
+            data_record = 'end';
 
         else
             %%%% keep looping if not left or right arrow key

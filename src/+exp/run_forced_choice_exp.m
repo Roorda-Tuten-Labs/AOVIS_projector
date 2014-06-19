@@ -1,4 +1,5 @@
-function [params, xyz] = run_forced_choice_exp(window, params, hue)
+function [params, abc] = run_forced_choice_exp(window, params, hue)
+    
     % import local files
     import gen.gen_hue_specific_params
     import stim.show_text
@@ -23,18 +24,19 @@ function [params, xyz] = run_forced_choice_exp(window, params, hue)
     % run the program
     [data_record, hue_angle, abc] = forced_choice_trial(window, params);
     
-    % record the blue and yellow angles for use with white later
-    if strcmp(hue, 'blue')
-        params.blu = hue_angle(1);
-        params.blue_abc = abc;
-    elseif strcmp(hue, 'yellow')
-        params.yel = hue_angle(1);
-        params.yellow_abc = abc;
-    elseif strcmp(hue, 'white')
-        params.white_abc = xyz;
+    if ~strcmp(data_record, 'end')
+        % record the blue and yellow angles for use with white later
+        if strcmp(hue, 'blue')
+            params.blu = hue_angle(1);
+            params.blue_abc = abc;
+        elseif strcmp(hue, 'yellow')
+            params.yel = hue_angle(1);
+            params.yellow_abc = abc;
+        elseif strcmp(hue, 'white')
+            params.white_abc = abc;
+        end
+
+        % save the file to csv and json
+        save_to_file(data_record, params.subject, hue, params);
     end
-    
-    % save the file to csv and json
-    save_to_file(data_record, params.subject, hue, params);
-    
 end

@@ -46,4 +46,7 @@ end
 p = randperm(params.ntrials); % 1:ntrials
 color_sequence = color_sequence(p, :);
 params.color_sequence = color_sequence;
+
+params.gray_point = SensorToSettings(cal, xyYToXYZ([1/3 1/3 params.LUM]'));
+
 end

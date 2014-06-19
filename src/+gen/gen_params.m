@@ -73,6 +73,8 @@ params.psych_method = 'adjustment';
 params.fixation_offset_x = params.pixel_width / 2; % center it
 params.fixation_offset_y = params.pixel_height / 2; % center it
 
+params.background = [0, 0, 0]; % defaults to black
+
 params = gen_hue_specific_params(params.uniqueHue, params);
 
 end
