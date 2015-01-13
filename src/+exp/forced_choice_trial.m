@@ -27,7 +27,7 @@ if params.show_plot
 else
     
 % Load default calibration file:
-cal = LoadCalFile(params.cal_file);
+cal = LoadCalFile(params.cal_file, [], params.cal_dir);
 T_xyz1931 = csvread('ciexyz31.csv')';
 S_xyz1931 = [380, 5, 81];
 

@@ -23,7 +23,7 @@ elseif strcmp(params.color_space, 'xyY')
     params.yellow_abc = [0.32 0.4]';
 end
 
-cal = LoadCalFile(params.cal_file);
+cal = LoadCalFile(params.cal_file, [], params.cal_dir);
 T_xyz1931 = csvread('ciexyz31.csv')';
 S_xyz1931 = [380, 5, 81];
 

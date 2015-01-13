@@ -23,7 +23,8 @@ end
 params.show_plot = 0;
 params.constant_stim = 1;
 
-params.cal_file = 'Feb13_2014a';
+params.cal_file = 'RoordaLabMarch12_2014b.mat';
+params.cal_dir = '../cal/files/';
 params.pause_time = 1.0; % in sec
 params.screen = 0; % which screen to display.
 

@@ -52,9 +52,10 @@ function params = gui_disp(params)
     cal_file = uicontrol(ph,'Style','edit',...
             'Units','normalized',...
             'String', num2str(params.cal_file),...
-            'Position', [.55 .75 .4 .15]); 
+            'Position', [.55 .75 .4 .15], ...
+            'Enable', 'Inactive', ...
+            'ButtonDownFcn', @get_cal_file);
 
-        
     uicontrol(ph,'Style','text',...
                 'String','screen',...
                 'Units','normalized',...
@@ -66,6 +67,7 @@ function params = gui_disp(params)
             'Position', [.55 .55 .4 .15]);
 
     % ---- Buttons
+
     uicontrol(ph,'Style','pushbutton','String','start',...
             'Units','normalized',...
             'Position', [.05 .05 .9 .15], ...
@@ -75,12 +77,19 @@ function params = gui_disp(params)
     
     get_current_params();
     
+    function get_cal_file(~, ~)
+        [fname, directory] = uigetfile({'*.mat'; }, ...
+            'Select the calibration file', '../cal/files/');
+        params.cal_file = fname;
+        params.cal_dir = directory;
+        set(cal_file,'String', params.cal_file);
+    end
+
     function get_current_params()
         params.x = str2double(get(x_coord,'String'));
         params.y = str2double(get(y_coord,'String'));
         params.LUM = str2double(get(LUM,'String'));
 
-        params.cal_file = get(cal_file,'String');
         params.screen = str2double(get(screen,'String'));
    
         %%% image params
@@ -92,8 +101,6 @@ function params = gui_disp(params)
         params.save_params = 1;
 
     end
-
-    
 
     close all;
 

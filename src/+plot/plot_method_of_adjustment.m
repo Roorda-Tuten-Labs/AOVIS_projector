@@ -8,7 +8,7 @@ if ~isfield(params, 'cal_file')
     params.cal_file = 'Feb13_2014a';
 end
 
-cal = LoadCalFile(params.cal_file);
+cal = LoadCalFile(params.cal_file, [], params.cal_dir);
 T_xyz1931 = csvread('ciexyz31.csv')';
 S_xyz1931 = [380, 5, 81];
 
