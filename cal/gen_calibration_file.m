@@ -1,4 +1,4 @@
-calibration_file_name = 'data/roorda_march10_2014_raw_data_2.csv';
+calibration_file_name = 'data/roorda_march12_2014_raw_data_EDIT.csv';
 % Create calibration structure;
 cal = [];
 
@@ -86,7 +86,6 @@ cal.describe.gamma.fitType = 'cubic interpolation';
 
 
 cal_data = csvread(calibration_file_name);
-cal.describe.nMeas = 16;
 
 % ---- Subtract off ambient light from each measurment
 corrected_data = zeros(cal.describe.S(3), cal.describe.nMeas * 3);

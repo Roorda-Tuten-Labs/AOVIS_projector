@@ -179,7 +179,7 @@ end
             xyz = 'end';
             forward = 1;
             import stim.cleanup
-            cleanup(window);
+            cleanup(params);
             
         elseif strcmp(keyname, 'space')
             % ---- Compute xyz result for white

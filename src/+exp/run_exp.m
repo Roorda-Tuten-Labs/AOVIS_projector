@@ -10,6 +10,9 @@ import stim.cleanup
 
 KbName('UnifyKeyNames');
 
+% ---- Make sure directories exist for saving data
+check_for_data_dir(params.subject);
+    
 % ---- Set up window
 [window, oldVisualDebugLevel, oldSupressAllWarnings] = setup_window(...
     params.screen);
@@ -31,18 +34,20 @@ if strcmp(params.psych_method, 'forced choice')
         % ---- Show final stimulus
         show_stimulus([xyz(1) xyz(2) params.LUM]', params, window, 0);
 
-        cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
+        cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings);
 
     catch  %#ok<*CTCH>
 
-        cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
+        cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings);
         psychrethrow(psychlasterror);
     end
 
 elseif strcmp(params.psych_method, 'adjustment')
     
     [params, xyz] = run_adjustment_exp(window, params);
-        
+
+elseif strcmp(params.psych_method, 'display')
+    [xyz, params] = show_stimulus([params.x params.y params.LUM], params, window, 1);
 end
 
 if ~strcmp(xyz, 'end')
@@ -51,5 +56,5 @@ if ~strcmp(xyz, 'end')
     disp('xyz:'); disp(xyz);
     disp('uv:'); disp(xyTouv(xyz(1:2)));
 else
-    cleanup(oldVisualDebugLevel, oldSupressAllWarnings);
+    cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings);
 end

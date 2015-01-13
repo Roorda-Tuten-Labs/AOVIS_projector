@@ -75,6 +75,8 @@ params.fixation_offset_y = params.pixel_height / 2; % center it
 
 params.background = [0, 0, 0]; % defaults to black
 
+params.save_params = 0;
+
 params = gen_hue_specific_params(params.uniqueHue, params);
 
 end

@@ -1,5 +1,5 @@
-function params = white_gui(params)
-    % white_gui Brief description of GUI.
+function params = gui_exp(params)
+    % experiment Brief description of GUI.
 
     %  Construct the components
     
