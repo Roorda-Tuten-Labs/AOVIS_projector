@@ -1,16 +1,15 @@
 function [data_record, fit_params, xyz] = forced_choice_trial(window, ...
-    params, close_at_end)
+    params, cal, close_at_end)
 % uniqueHues
 %%% white computation (linear spacing) - less yellow bias.
 
-if nargin < 3
+if nargin < 4
     close_at_end = 0;
 end
 
 % ---------- import functions from other modules
 import gen.gen_image_sequence
 import stim.display_image
-import stim.show_stimulus
 import stim.cleanup
 import stim.display_black_screen
 import exp.get_key_input
@@ -25,15 +24,6 @@ echo off
 if params.show_plot
     plot_stimuli({'blue' 'yellow' 'white'}, params);
 else
-    
-% Load default calibration file:
-cal = LoadCalFile(params.cal_file, [], params.cal_dir);
-T_xyz1931 = csvread('ciexyz31.csv')';
-S_xyz1931 = [380, 5, 81];
-
-T_xyz1931 = 683 * T_xyz1931;  % lm/W (CIE recommendation for self-luminous)
-cal = SetSensorColorSpace(cal, T_xyz1931, S_xyz1931);
-cal = SetGammaMethod(cal,0);
 
 % ---------- Gen image sequence --------
 params = gen_image_sequence(cal, params);

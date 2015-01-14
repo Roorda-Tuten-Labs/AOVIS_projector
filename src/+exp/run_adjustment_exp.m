@@ -1,4 +1,4 @@
-function [params, xyz] = run_adjustment_exp(window, params)
+function [params, xyz] = run_adjustment_exp(window, params, cal)
     import stim.show_stimulus
     import stim.display_black_screen
     import stim.cleanup
@@ -17,7 +17,7 @@ function [params, xyz] = run_adjustment_exp(window, params)
             [a, b] = CIE_from_Angle(angle, params.RHO, ...
                 params.color_space);
             data_record(i, 4:5) = [a, b]; % record starting position
-            [xyz, params] = show_stimulus([a b params.LUM], params, ...
+            [xyz, params] = show_stimulus([a b params.LUM], params, cal, ...
                 window, 0);
             
             if strcmp(xyz, 'end')
@@ -39,7 +39,7 @@ function [params, xyz] = run_adjustment_exp(window, params)
         xyz = mean(data_record(:, 1:3), 1)';
         xyY = XYZToxyY(xyz);
         uv = xyTouv([xyY(1) xyY(2)]');
-        show_stimulus([uv(1) uv(2) params.LUM], params, window, 0);
+        show_stimulus([uv(1) uv(2) params.LUM], params, cal, window, 0);
         KbWait();
         
         % ---- cleanup ----

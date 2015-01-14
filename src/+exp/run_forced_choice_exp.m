@@ -1,4 +1,4 @@
-function [params, abc] = run_forced_choice_exp(window, params, hue)
+function [params, abc] = run_forced_choice_exp(window, params, cal, hue)
     
     % import local files
     import gen.gen_hue_specific_params
@@ -22,7 +22,7 @@ function [params, abc] = run_forced_choice_exp(window, params, hue)
     pause(0.2); 
     
     % run the program
-    [data_record, hue_angle, abc] = forced_choice_trial(window, params);
+    [data_record, hue_angle, abc] = forced_choice_trial(window, params, cal);
     
     if ~strcmp(data_record, 'end')
         % record the blue and yellow angles for use with white later

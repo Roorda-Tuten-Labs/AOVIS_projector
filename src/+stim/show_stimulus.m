@@ -1,4 +1,4 @@
-function [xyz, params] = show_stimulus(xyY, params, window, close_at_end, cal)
+function [xyz, params] = show_stimulus(xyY, params, cal, window, close_at_end)
 
 import gen.gen_image_sequence
 import stim.display_image
@@ -15,14 +15,11 @@ if nargin < 2
     import gen.gen_params
     params = gen_params();
 end
-if nargin < 3
+if nargin < 4
     import stim.setup_window
     window = setup_window(params.screen);
 end
-if nargin < 4 && nargin > 1
-    close_at_end = 0;
-end
-if nargin < 5
+if nargin < 3
     % Load default calibration file:
     cal = LoadCalFile(params.cal_file, [], params.cal_dir);
     T_xyz1931 = csvread('ciexyz31.csv')';
@@ -31,6 +28,9 @@ if nargin < 5
     T_xyz1931 = 683 * T_xyz1931;
     cal = SetSensorColorSpace(cal, T_xyz1931, S_xyz1931);
     cal = SetGammaMethod(cal,0);
+end
+if nargin < 5 && nargin > 1
+    close_at_end = 0;
 end
 
 KbName('UnifyKeyNames');
