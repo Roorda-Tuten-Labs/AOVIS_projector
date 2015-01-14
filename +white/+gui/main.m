@@ -1,4 +1,5 @@
-function decision = main()
+function params = main()
+    import white.*
     % display Brief description of GUI.
     decision = '';
     
@@ -34,6 +35,19 @@ function decision = main()
         decision = 'display';
     end
 
-    close all;
+    close(f);
+    
+    % ---- Call User Interface to change parameters
+    if strcmp(decision, 'experiment')
+        
+        % ---- Generate default parameters
+        params = gen.default_params();
+        params = gui.exp(params);
 
+    elseif strcmp(decision, 'display')
+
+        params = gui.disp();
+    end
+
+    close all;
 end

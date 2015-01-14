@@ -1,4 +1,4 @@
-function params = disp(params)
+function params = disp()
     % display Brief description of GUI.
 
     load ./param/default_params.mat
