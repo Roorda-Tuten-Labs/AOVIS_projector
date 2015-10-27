@@ -1,5 +1,5 @@
-function display_image(window, background, params, color, left, right, ... 
-    left_label, right_label)
+function display_matching_stim(window, background, params, color, ...
+    match_params, match_color, left, right, left_label, right_label)
 
     if nargin < 7
         left_label = 'left';
@@ -34,8 +34,20 @@ function display_image(window, background, params, color, left, right, ...
     elseif strcmp(params.stimulus_shape, 'rectangle')  
         Screen('FillRect', window, color, rect);
     end
+
+    % 4. Match Stimulus
+    rect = [0, 0, match_params.img_x, match_params.img_y];
+    rect = CenterRectOnPoint(rect, match_params.img_offset_x, ...
+        match_params.img_offset_y);
     
-    % 4. Writes text to the window.
+    if strcmp(match_params.stimulus_shape, 'circle')
+        Screen('FillOval', window, match_color, rect);
+
+    elseif strcmp(match_params.stimulus_shape, 'rectangle')  
+        Screen('FillRect', window, match_color, rect);
+    end
+    
+    % 5. Writes text to the window.
     currentTextRow = 0;
     if num_of_print == 2
         Screen('DrawText', window, ...
@@ -47,7 +59,7 @@ function display_image(window, background, params, color, left, right, ...
                 0, currentTextRow, 150);       
     end
     
-    % 5. Updates the screen to reflect our changes to the window.
+    % 6. Updates the screen to reflect our changes to the window.
     Screen('Flip', window);
         
 end

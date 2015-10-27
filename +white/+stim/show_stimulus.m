@@ -39,22 +39,31 @@ params.y = xyY(2);
 params.LUM = xyY(3);
 params = gen.image_sequence(cal, params);
 
+% In case matching stimulus is added, keep track of which to change.
+match = 0;
+match_params = params;
+match_params.img_offset_x = params.img_offset_x + 50;
+match_params.img_offset_y = params.img_offset_y + 50;
+
+% params to control:
+active_params = params;
+
 try 
     % Retrieves the CLUT color code for background.
-    background = params.background;
+    background = active_params.background;
     
     % showimg = gen_show_img(img, params.color_sequence, params);
     
     [a, b] = format_numbers(xyY);
     
-    stim.display_image(window, background, params, params.color_sequence(1, 1:3), ...
+    stim.display_image(window, background, active_params, active_params.color_sequence(1, 1:3), ...
         a, b, 'ab', 'LUM');
     
     forward = 0;
     while ~forward
         [~, keycode, ~] = KbWait();
         keyname = KbName(keycode);
-        forward = process_keys(keyname);
+        [forward, active_params] = process_keys(keyname, active_params);
         
     end
     if close_at_end
@@ -71,14 +80,28 @@ catch  %#ok<*CTCH>
 end
 
     % --- subroutines ---
-    function redraw_image(window, background, cal, params)
+    function redraw_image(window, background, cal, active_params)
         import white.*
-        params = gen.image_sequence(cal, params);
-        xyY = [params.x params.y params.LUM];
-        %showimg_ = gen_show_img(img, params.color_sequence, params);
-        [a_, b_] = format_numbers(xyY);
-        stim.display_image(window, background, params, params.color_sequence(1, 1:3), ...
-            a_, b_, 'ab', 'LUM');
+        
+        if match < 0.1
+            active_params = gen.image_sequence(cal, active_params);
+            xyY = [active_params.x active_params.y active_params.LUM];
+            [a_, b_] = format_numbers(xyY);
+            stim.display_image(window, background, active_params, ...
+                active_params.color_sequence(1, 1:3), ...
+                a_, b_, 'ab', 'LUM');
+        else
+            active_params = gen.image_sequence(cal, active_params);
+            xyY = [active_params.x active_params.y active_params.LUM];
+            [a_, b_] = format_numbers(xyY);
+            
+            params = gen.image_sequence(cal, params);
+            stim.display_matching_stim(window, background, params, ...
+                params.color_sequence(1, 1:3), ...
+                active_params, active_params.color_sequence(1, 1:3), ...
+                a_, b_, 'ab', 'LUM');   
+        end
+        
         pause(0.2); % prevent 'sticky keys'
 
     end
@@ -88,7 +111,7 @@ end
         b = num2str(round(abc(3) * 1000) / 1000);
     end
 
-    function [forward] = process_keys(keyname)
+    function [forward, active_params] = process_keys(keyname, active_params)
         import white.*
         
         xy_step = 0.0025;
@@ -106,72 +129,86 @@ end
         end
         
         if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
-            params.x = params.x - xy_step;
-            redraw_image(window, background, cal, params);
+            active_params.x = active_params.x - xy_step;
+            redraw_image(window, background, cal, active_params);
 
         elseif strcmp(keyname, 'RightArrow')|| strcmp(keyname, 'right')
-            params.x = params.x + xy_step;
-            redraw_image(window, background, cal, params);
+            active_params.x = active_params.x + xy_step;
+            redraw_image(window, background, cal, active_params);
 
         elseif strcmp(keyname, 'UpArrow')|| strcmp(keyname, 'up')
-            params.y = params.y + xy_step;
-            redraw_image(window, background, cal, params);
+            active_params.y = active_params.y + xy_step;
+            redraw_image(window, background, cal, active_params);
 
         elseif strcmp(keyname, 'DownArrow')|| strcmp(keyname, 'down')
-            params.y = params.y - xy_step;
-            redraw_image(window, background, cal, params);
+            active_params.y = active_params.y - xy_step;
+            redraw_image(window, background, cal, active_params);
 
         elseif strcmp(keyname, 'Return')|| strcmp(keyname, 'return')
-            params.LUM = params.LUM + LUM_step;
-            redraw_image(window, background, cal, params);
+            active_params.LUM = active_params.LUM + LUM_step;
+            redraw_image(window, background, cal, active_params);
 
         elseif strcmp(keyname, 'Shift') || strcmp(keyname, 'RightShift')
-            params.LUM = params.LUM - LUM_step;
-            redraw_image(window, background, cal, params);
+            active_params.LUM = active_params.LUM - LUM_step;
+            redraw_image(window, background, cal, active_params);
 
         elseif strcmp(keyname, 'f')|| strcmp(keyname, 'F')
-            params.img_offset_x = params.img_offset_x  - off_step;
-            redraw_image(window, background, cal, params);
+            active_params.img_offset_x = active_params.img_offset_x  - off_step;
+            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'g')|| strcmp(keyname, 'G')
-            params.img_offset_x = params.img_offset_x  + off_step;
-            redraw_image(window, background, cal, params);
+            active_params.img_offset_x = active_params.img_offset_x  + off_step;
+            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'v')|| strcmp(keyname, 'V')
-            params.img_offset_y = params.img_offset_y  + off_step;
-            redraw_image(window, background, cal, params);
+            active_params.img_offset_y = active_params.img_offset_y  + off_step;
+            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 't')|| strcmp(keyname, 'T')
-            params.img_offset_y = params.img_offset_y  - off_step;
-            redraw_image(window, background, cal, params);
+            active_params.img_offset_y = active_params.img_offset_y  - off_step;
+            redraw_image(window, background, cal, active_params);
 
         elseif strcmp(keyname, 'u')|| strcmp(keyname, 'U')
-            params.img_x = params.img_x  - size_step;
-            redraw_image(window, background, cal, params);
+            active_params.img_x = active_params.img_x  - size_step;
+            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'n')|| strcmp(keyname, 'N')
-            params.img_x = params.img_x  + size_step;
-            redraw_image(window, background, cal, params);
+            active_params.img_x = active_params.img_x  + size_step;
+            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'h')|| strcmp(keyname, 'H')
-            params.img_y = params.img_y  + size_step;
-            redraw_image(window, background, cal, params);
+            active_params.img_y = active_params.img_y  + size_step;
+            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'j')|| strcmp(keyname, 'J')
-            params.img_y = params.img_y  - size_step;
-            redraw_image(window, background, cal, params);
+            active_params.img_y = active_params.img_y  - size_step;
+            redraw_image(window, background, cal, active_params);
 
         elseif strcmp(keyname, 'w')|| strcmp(keyname, 'W')
-            params.fixation_offset_y = params.fixation_offset_y  - size_step * 4;
-            redraw_image(window, background, cal, params);
+            active_params.fixation_offset_y = active_params.fixation_offset_y  - size_step * 4;
+            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'z')|| strcmp(keyname, 'Z')
-            params.fixation_offset_y = params.fixation_offset_y  + size_step * 4;
-            redraw_image(window, background, cal, params);
+            active_params.fixation_offset_y = active_params.fixation_offset_y  + size_step * 4;
+            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'a')|| strcmp(keyname, 'A')
-            params.fixation_offset_x = params.fixation_offset_x  - size_step * 4;
-            redraw_image(window, background, cal, params);
+            active_params.fixation_offset_x = active_params.fixation_offset_x  - size_step * 4;
+            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 's')|| strcmp(keyname, 'S')
-            params.fixation_offset_x = params.fixation_offset_x  + size_step * 4;
-            redraw_image(window, background, cal, params);
+            active_params.fixation_offset_x = active_params.fixation_offset_x  + size_step * 4;
+            redraw_image(window, background, cal, active_params);
 
+            
+        elseif strcmp(keyname, '0')
+            if match < 0.1
+                match = 1;
+                params = active_params; % save params
+                active_params = match_params;
+                
+            elseif match > 0.9
+                match = 0;
+                match_params = active_params; % save match params
+                active_params = params;
+            end
+            redraw_image(window, background, cal, active_params);
+            
         elseif strcmp(keyname, 'ESCAPE')|| strcmp(keyname, 'escape')
             xyz = 'end';
             forward = 1;
-            stim.cleanup(params);
+            stim.cleanup(active_params);
             
         elseif strcmp(keyname, 'space') && disable_spacebar == 0
             forward = 1;

@@ -1,5 +1,6 @@
 function params = main()
     import white.*
+    
     % display Brief description of GUI.
     decision = '';
     
