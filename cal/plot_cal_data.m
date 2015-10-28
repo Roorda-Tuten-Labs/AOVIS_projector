@@ -23,7 +23,7 @@ box off;
 
 figure(2);
 
-T_xyz1931 = csvread('../src/ciexyz31.csv')';
+T_xyz1931 = csvread('data/ciexyz31.csv')';
 S_xyz1931 = [380, 5, 81];
 
 CMFs = SplineCmf(S_xyz1931, T_xyz1931, [380 1 401]);

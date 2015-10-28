@@ -91,8 +91,8 @@ end
     function [forward] = process_keys(keyname)
         import white.*
         
-        xy_step = 0.0025;
-        LUM_step = 1;
+        xy_step = 0.002;
+        LUM_step = 0.5;
         off_step = 7;
         size_step = 5;
         forward = 0;
