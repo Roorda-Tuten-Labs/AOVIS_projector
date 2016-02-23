@@ -2,6 +2,7 @@ function run(params)
 
 import white.*
 
+% ---- Make sure key names are the same across systems
 KbName('UnifyKeyNames');
 
 % ---- Make sure directories exist for saving data
@@ -9,7 +10,7 @@ fil.check_for_data_dir(params.subject);
     
 % ---- Set up window
 [window, oldVisualDebugLevel, oldSupressAllWarnings] = stim.setup_window(...
-    params.screen);
+    params.screen, params.textsize, params.debug);
 
 % ---- Load calibration file:
 cal = gen.cal_struct(params.cal_file, params.cal_dir);

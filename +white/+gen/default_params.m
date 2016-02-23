@@ -26,6 +26,7 @@ params.cal_file = 'RoordaLabMarch12_2014b.mat';
 params.cal_dir = './cal/files/';
 params.pause_time = 1.0; % in sec
 params.screen = 0; % which screen to display.
+params.textsize = 20; % size of text on screen.
 
 % ---------- Color Setup ----------
 % Gets color values.
@@ -47,7 +48,7 @@ if strcmp(params.color_space, 'xyY')
 elseif strcmp(params.color_space, 'Luv')
     params.white = xyTouv([1/3 1/3]');
     params.RHO = 0.072;
-    params.angle_bounds.y1 = 70;
+    Params.angle_bounds.y1 = 70;
     params.angle_bounds.y2 = 130;
     params.angle_bounds.b1 = 195;
     params.angle_bounds.b2 = 255;
@@ -60,6 +61,10 @@ end
     params.screen);
 [params.pixel_width, params.pixel_height] = Screen('WindowSize', ...
     params.screen);
+
+% CIE xy coords
+params.x = 0.3;
+params.y = 0.3;
 
 params.img_x = 220;
 params.img_y = 190;
