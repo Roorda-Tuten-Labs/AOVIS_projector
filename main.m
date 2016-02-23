@@ -2,6 +2,7 @@ clear all; close all;
 
 %%% compute dominant wavelength
 %%% inverted sine wave
+%%% add debugging switch to this file (params);
 
 % ---- Import local files
 import white.*
