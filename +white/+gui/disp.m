@@ -104,7 +104,7 @@ function params = disp()
             params.screen);
         
         params.save_params = 1;
-
+        params.psych_method = 'display';
     end
 
     close all;

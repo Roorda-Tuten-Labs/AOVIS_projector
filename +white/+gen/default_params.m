@@ -14,7 +14,7 @@ else
     params.subject = subject;
 end
 if nargin < 3
-    params.color_space = 'Luv';
+    params.color_space = 'xyY';
 else
     params.color_space = color_space;
 end
