@@ -1,5 +1,6 @@
 clear all; close all;
 
+debug_mode = 0;
 %%% compute dominant wavelength
 %%% inverted sine wave
 
@@ -10,6 +11,9 @@ import white.*
 fil.add_depend();
 
 % ---- Get parameters for experiment or display stimulus
-params = gui.disp();
+
+%params = gui.main();
+params = gui.disp(); % only disp stimulus
+params.debug_mode = debug_mode;
 
 exp.run(params);

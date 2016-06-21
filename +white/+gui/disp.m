@@ -1,8 +1,13 @@
 function params = disp()
-    % display Brief description of GUI.
+    import white.*
 
-    load ./param/default_params.mat
-    
+    % display Brief description of GUI.
+    if exist('./param/default_params.mat', 'file') == 2
+        load ./param/default_params.mat
+    else
+        params = gen.default_params();
+    end
+
     %  Construct the components
     
     % ---- Figure handle
@@ -111,6 +116,8 @@ function params = disp()
         params.save_params = 1;
         params.fixation_size = str2double(get(fixation_size, 'String'));
 
+        params.psych_method = 'display';
+        
     end
 
     close all;

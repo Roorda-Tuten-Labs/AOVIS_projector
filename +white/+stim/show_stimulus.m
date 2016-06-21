@@ -14,7 +14,8 @@ if nargin < 2
     params = gen.default_params();
 end
 if nargin < 4
-    window = stim.setup_window(params.screen);
+    window = stim.setup_window(params.screen, params.textsize, ...
+        params.debug_mode);
 end
 if nargin < 3
     cal = gen.cal_struct(params.cal_file, params.cal_dir);

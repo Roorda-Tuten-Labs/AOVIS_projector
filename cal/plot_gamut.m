@@ -1,8 +1,8 @@
-cal_data = csvread('cal/calibration_raw_data.csv');
+cal_data = csvread('data/calibration_raw_data.csv');
 cal.describe.nMeas = 16;
 
 % Load default calibration file:
-T_xyz1931 = csvread('ciexyz31.csv')';
+T_xyz1931 = csvread('data/ciexyz31.csv')';
 S_xyz1931 = [380, 5, 81];
 
 CMFs = SplineCmf(S_xyz1931, T_xyz1931, [380 1 401]);
