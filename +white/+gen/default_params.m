@@ -19,6 +19,8 @@ else
     params.color_space = color_space;
 end
 
+params.fixation_size = 2; % in pixels
+
 params.show_plot = 0;
 params.constant_stim = 1;
 

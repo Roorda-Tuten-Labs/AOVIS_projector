@@ -10,6 +10,6 @@ import white.*
 fil.add_depend();
 
 % ---- Get parameters for experiment or display stimulus
-params = gui.main();
+params = gui.disp();
 
 exp.run(params);

@@ -18,7 +18,7 @@ function display_image(window, background, params, color, left, right, ...
     Screen('FillRect', window, background);
     
     % 2. Fixation point
-    rect = [0, 0, 2, 2];
+    rect = [0, 0, params.fixation_size, params.fixation_size];
     rect = CenterRectOnPoint(rect, params.fixation_offset_x, ...
         params.fixation_offset_y);
     Screen('FillOval', window, [180 180 180], rect);

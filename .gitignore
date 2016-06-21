@@ -6,3 +6,4 @@ sample/*
 *.m~
 data/sample*
 param/default_params.mat
+*_OLD.mat

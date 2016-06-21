@@ -115,9 +115,9 @@ end
         import white.*
         
         xy_step = 0.0025;
-        LUM_step = 1;
-        off_step = 7;
-        size_step = 5;
+        LUM_step = 0.5;
+        off_step = 2;
+        size_step = 1;
         forward = 0;
         % handle case of shift on windows OS
         if length(keyname) == 2
