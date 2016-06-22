@@ -39,6 +39,8 @@ params.x = xyY(1);
 params.y = xyY(2);
 params.LUM = xyY(3);
 params = gen.image_sequence(cal, params);
+params.add_grid_lines_flag = 0;
+params.add_square_flag = 1;
 
 % In case matching stimulus is added, keep track of which to change.
 match = 0;
@@ -53,8 +55,6 @@ try
     % Retrieves the CLUT color code for background.
     background = active_params.background;
     
-    % showimg = gen_show_img(img, params.color_sequence, params);
-    
     [a, b] = format_numbers(xyY);
     
     stim.display_image(window, background, active_params, active_params.color_sequence(1, 1:3), ...
@@ -62,9 +62,12 @@ try
     
     forward = 0;
     while ~forward
-        [~, keycode, ~] = KbWait();
+        [~, keycode, ~] = KbWait(-1);
         keyname = KbName(keycode);
         [forward, active_params] = process_keys(keyname, active_params);
+        if forward ~= 1
+            redraw_image(window, background, cal, active_params);
+        end
         
     end
     if close_at_end
@@ -131,67 +134,58 @@ end
         
         if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
             active_params.x = active_params.x - xy_step;
-            redraw_image(window, background, cal, active_params);
-
         elseif strcmp(keyname, 'RightArrow')|| strcmp(keyname, 'right')
             active_params.x = active_params.x + xy_step;
-            redraw_image(window, background, cal, active_params);
-
         elseif strcmp(keyname, 'UpArrow')|| strcmp(keyname, 'up')
             active_params.y = active_params.y + xy_step;
-            redraw_image(window, background, cal, active_params);
-
         elseif strcmp(keyname, 'DownArrow')|| strcmp(keyname, 'down')
             active_params.y = active_params.y - xy_step;
-            redraw_image(window, background, cal, active_params);
-
+          
         elseif strcmp(keyname, 'Return')|| strcmp(keyname, 'return')
             active_params.LUM = active_params.LUM + LUM_step;
-            redraw_image(window, background, cal, active_params);
-
         elseif strcmp(keyname, 'Shift') || strcmp(keyname, 'RightShift')
             active_params.LUM = active_params.LUM - LUM_step;
-            redraw_image(window, background, cal, active_params);
 
         elseif strcmp(keyname, 'f')|| strcmp(keyname, 'F')
             active_params.img_offset_x = active_params.img_offset_x  - off_step;
-            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'g')|| strcmp(keyname, 'G')
             active_params.img_offset_x = active_params.img_offset_x  + off_step;
-            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'v')|| strcmp(keyname, 'V')
             active_params.img_offset_y = active_params.img_offset_y  + off_step;
-            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 't')|| strcmp(keyname, 'T')
             active_params.img_offset_y = active_params.img_offset_y  - off_step;
-            redraw_image(window, background, cal, active_params);
+            
 
         elseif strcmp(keyname, 'u')|| strcmp(keyname, 'U')
             active_params.img_x = active_params.img_x  - size_step;
-            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'n')|| strcmp(keyname, 'N')
             active_params.img_x = active_params.img_x  + size_step;
-            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'h')|| strcmp(keyname, 'H')
             active_params.img_y = active_params.img_y  + size_step;
-            redraw_image(window, background, cal, active_params);
         elseif strcmp(keyname, 'j')|| strcmp(keyname, 'J')
             active_params.img_y = active_params.img_y  - size_step;
-            redraw_image(window, background, cal, active_params);
-
+ 
         elseif strcmp(keyname, 'w')|| strcmp(keyname, 'W')
-            active_params.fixation_offset_y = active_params.fixation_offset_y  - size_step * 4;
-            redraw_image(window, background, cal, active_params);
+            active_params.fixation_offset_y = active_params.fixation_offset_y  - size_step * 3;
         elseif strcmp(keyname, 'z')|| strcmp(keyname, 'Z')
-            active_params.fixation_offset_y = active_params.fixation_offset_y  + size_step * 4;
-            redraw_image(window, background, cal, active_params);
+            active_params.fixation_offset_y = active_params.fixation_offset_y  + size_step * 3;
         elseif strcmp(keyname, 'a')|| strcmp(keyname, 'A')
-            active_params.fixation_offset_x = active_params.fixation_offset_x  - size_step * 4;
-            redraw_image(window, background, cal, active_params);
+            active_params.fixation_offset_x = active_params.fixation_offset_x  - size_step * 3;
         elseif strcmp(keyname, 's')|| strcmp(keyname, 'S')
-            active_params.fixation_offset_x = active_params.fixation_offset_x  + size_step * 4;
-            redraw_image(window, background, cal, active_params);
+            active_params.fixation_offset_x = active_params.fixation_offset_x  + size_step * 3;
 
+        elseif strcmp(keyname, '1')
+            if active_params.add_grid_lines_flag == 1;
+                active_params.add_grid_lines_flag = 0;
+            else
+                active_params.add_grid_lines_flag = 1;
+            end
+        elseif strcmp(keyname, '2')
+            if active_params.add_square_flag == 1;
+                active_params.add_square_flag = 0;
+            else
+                active_params.add_square_flag = 1;
+            end
             
         elseif strcmp(keyname, '0')
             if match < 0.1
@@ -204,7 +198,6 @@ end
                 match_params = active_params; % save match params
                 active_params = params;
             end
-            redraw_image(window, background, cal, active_params);
             
         elseif strcmp(keyname, 'ESCAPE')|| strcmp(keyname, 'escape')
             xyz = 'end';
@@ -214,6 +207,7 @@ end
         elseif strcmp(keyname, 'space') && disable_spacebar == 0
             forward = 1;
         end
+
     end
 
     % ---- Compute xyz result for white

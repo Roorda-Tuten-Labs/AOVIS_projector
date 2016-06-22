@@ -1,4 +1,4 @@
-clear all; close all;
+clearvars; close all;
 
 debug_mode = 0;
 %%% compute dominant wavelength

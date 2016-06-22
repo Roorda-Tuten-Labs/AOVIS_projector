@@ -21,12 +21,12 @@ function [window, oldVisualDebugLevel, oldSupressAllWarnings] = ...
 	HideCursor;
 	
 	% Opens a graphics window on the main monitor (screen 0).
-        if debug_mode
-            window = Screen('OpenWindow', whichScreen, [], [0, 0, ...
-                                640, 480]);
-        else
-            window = Screen('OpenWindow', whichScreen);
-        end
+    if debug_mode
+        window = Screen('OpenWindow', whichScreen, [], [0, 0, ...
+                            640, 480]);
+    else
+        window = Screen('OpenWindow', whichScreen);
+    end
 
     Screen('TextSize', window, textSize);
     
