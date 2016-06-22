@@ -27,6 +27,7 @@ if nargin < 6
     disable_spacebar = 0;
 end
 
+% ---- Make sure key names are the same across systems
 KbName('UnifyKeyNames');
 
 % ---------- Gen image sequence --------
