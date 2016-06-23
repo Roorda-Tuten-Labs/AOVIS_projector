@@ -28,6 +28,13 @@ function display_image(window, background, params, color, left, right, ...
         disp(rect);
         rect = CenterRectOnPoint(rect, params.img_offset_x, ...
             params.img_offset_y);
+        if rect(2) < 0
+            desiredsize = params.fundus_img_scale * ysize;
+            maxsize = desiredsize + rect(2);
+            size_diff_rel = maxsize / desiredsize;
+            image_matrix = image_matrix(ysize - floor(ysize * size_diff_rel):end, :);
+            rect(2) = 0;
+        end
         
         image_matrix = imrotate(image_matrix, params.image_rot, 'crop');
         
