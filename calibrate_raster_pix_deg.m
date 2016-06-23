@@ -19,7 +19,7 @@ import white.*
 
 % ---- Get parameters for experiment or display stimulus
 params = gui.disp(); % only disp stimulus
-params.debug_mode = 1;
+params.debug_mode = 0;
 
 
 try
