@@ -25,10 +25,10 @@ function display_image(window, background, params, color, left, right, ...
     if params.add_fundus_image_flag
         [ysize, xsize, zsize] = size(image_matrix);
         rect = [0, 0, params.fundus_img_scale * xsize, params.fundus_img_scale * ysize];
-        disp(rect);
+        
         rect = CenterRectOnPoint(rect, params.img_offset_x, ...
             params.img_offset_y);
-        
+        disp(rect);
         image_matrix = imrotate(image_matrix, params.image_rot, 'crop');
         
         Screen('PutImage', window, image_matrix, rect);

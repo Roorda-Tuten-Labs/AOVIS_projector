@@ -24,7 +24,7 @@ function add_grid_lines(window, params, rect)
         Screen('DrawText', window, sprintf('%s', txt), ...
             raster_center(1) + deg * params.pix_per_deg, raster_center(2), 125);
         Screen('DrawText', window, sprintf('%s', txt), ...
-            raster_center(1), raster_center(2) + deg * params.pix_per_deg, 125);    
+            raster_center(1), raster_center(2) + -deg * params.pix_per_deg, 125);    
     end
 
 end
