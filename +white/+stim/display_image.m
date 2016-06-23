@@ -1,5 +1,5 @@
 function display_image(window, background, params, color, left, right, ... 
-    left_label, right_label)    
+    left_label, right_label, image_matrix)    
     if nargin < 7
         left_label = 'left';
     end
@@ -11,17 +11,34 @@ function display_image(window, background, params, color, left, right, ...
     else 
         num_of_print = 2;
     end
+    if nargin < 9 && length(image_matrix) < 1
+        % no image passed, so none to show. 
+        params.add_image_flag = 0;    
+    end
     import white.*
     
     % ---------- Image Display ---------- 
     % 1. Colors the entire window gray.
     Screen('FillRect', window, background);
+
+    % 2a. % 2a. Load image if desired
+    if params.add_fundus_image_flag
+        [ysize, xsize, zsize] = size(image_matrix);
+        rect = [0, 0, params.fundus_img_scale * xsize, params.fundus_img_scale * ysize];
+        disp(rect);
+        rect = CenterRectOnPoint(rect, params.img_offset_x, ...
+            params.img_offset_y);
+        
+        image_matrix = imrotate(image_matrix, params.image_rot, 'crop');
+        
+        Screen('PutImage', window, image_matrix, rect);
+    end
     
     % 2a. Create stimulus
     rect = [0, 0, params.img_x, params.img_y];
     rect = CenterRectOnPoint(rect, params.img_offset_x, ...
         params.img_offset_y);
-
+    
      % 2b. Add eccentricity grid lines if desired.
     if params.add_grid_lines_flag
         stim.add_grid_lines(window, params, rect);
