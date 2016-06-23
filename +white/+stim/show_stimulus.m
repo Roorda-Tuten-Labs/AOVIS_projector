@@ -40,6 +40,14 @@ params.x = xyY(1);
 params.y = xyY(2);
 params.LUM = xyY(3);
 params = gen.image_sequence(cal, params);
+
+if ~strcmp(params.fundus_image_file, '')
+    fundus_image = imread(params.fundus_image_file);
+    fundus_image = fundus_image(:, :, 1);
+end
+params.image_rot = 0;
+params.add_fundus_image_flag = 0;
+
 params.add_grid_lines_flag = 0;
 params.add_square_flag = 1;
 
@@ -51,15 +59,15 @@ match_params.img_offset_y = params.img_offset_y + 50;
 
 % params to control:
 active_params = params;
-
+big_steps = 1;
 try 
     % Retrieves the CLUT color code for background.
     background = active_params.background;
     
     [a, b] = format_numbers(xyY);
-    
+
     stim.display_image(window, background, active_params, active_params.color_sequence(1, 1:3), ...
-        a, b, 'ab', 'LUM');
+        a, b, 'ab', 'LUM', fundus_image);
     
     forward = 0;
     while ~forward
@@ -95,7 +103,7 @@ end
             [a_, b_] = format_numbers(xyY);
             stim.display_image(window, background, active_params, ...
                 active_params.color_sequence(1, 1:3), ...
-                a_, b_, 'ab', 'LUM');
+                a_, b_, 'ab', 'LUM', fundus_image);
         else
             active_params = gen.image_sequence(cal, active_params);
             xyY = [active_params.x active_params.y active_params.LUM];
@@ -105,10 +113,10 @@ end
             stim.display_matching_stim(window, background, params, ...
                 params.color_sequence(1, 1:3), ...
                 active_params, active_params.color_sequence(1, 1:3), ...
-                a_, b_, 'ab', 'LUM');   
+                a_, b_, 'ab', 'LUM', fundus_image);   
         end
         
-        pause(0.2); % prevent 'sticky keys'
+        pause(0.1); % prevent 'sticky keys'
 
     end
 
@@ -119,11 +127,23 @@ end
 
     function [forward, active_params] = process_keys(keyname, active_params)
         import white.*
+        keyname = lower(keyname);
+        if strcmp(keyname, 'control') || strcmp(keyname, 'leftcontrol') ...
+                || strcmp(keycode, 'rightcontrol')
+            disp('big step');
+            if big_steps == 5
+                big_steps = 1;
+            else
+                big_steps = 5;
+            end
+        end
         
-        xy_step = 0.0025;
-        LUM_step = 0.5;
-        off_step = 2;
-        size_step = 1;
+        xy_step = 0.0025 * big_steps;
+        LUM_step = 0.5 * big_steps;
+        off_step = 2 * big_steps;
+        size_step = 1 * big_steps;
+        img_rot_scale = 2 * big_steps;
+        
         forward = 0;
         % handle case of shift on windows OS
         if length(keyname) == 2
@@ -134,48 +154,65 @@ end
             end
         end
         
-        if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
+        if strcmp(keyname, 'left') || strcmp(keyname, 'leftarrow') 
             active_params.x = active_params.x - xy_step;
-        elseif strcmp(keyname, 'RightArrow')|| strcmp(keyname, 'right')
+        elseif strcmp(keyname, 'rightarrow')|| strcmp(keyname, 'right')
             active_params.x = active_params.x + xy_step;
-        elseif strcmp(keyname, 'UpArrow')|| strcmp(keyname, 'up')
+        elseif strcmp(keyname, 'uparrow')|| strcmp(keyname, 'up')
             active_params.y = active_params.y + xy_step;
-        elseif strcmp(keyname, 'DownArrow')|| strcmp(keyname, 'down')
+        elseif strcmp(keyname, 'downarrow')|| strcmp(keyname, 'down')
             active_params.y = active_params.y - xy_step;
           
-        elseif strcmp(keyname, 'Return')|| strcmp(keyname, 'return')
+        elseif strcmp(keyname, 'return')
             active_params.LUM = active_params.LUM + LUM_step;
-        elseif strcmp(keyname, 'Shift') || strcmp(keyname, 'RightShift')
+        elseif strcmp(keyname, 'shift') || strcmp(keyname, 'rightshift')
             active_params.LUM = active_params.LUM - LUM_step;
 
-        elseif strcmp(keyname, 'f')|| strcmp(keyname, 'F')
+        elseif strcmp(keyname, 'f')
             active_params.img_offset_x = active_params.img_offset_x  - off_step;
-        elseif strcmp(keyname, 'g')|| strcmp(keyname, 'G')
+        elseif strcmp(keyname, 'g')
             active_params.img_offset_x = active_params.img_offset_x  + off_step;
-        elseif strcmp(keyname, 'v')|| strcmp(keyname, 'V')
+        elseif strcmp(keyname, 'v')
             active_params.img_offset_y = active_params.img_offset_y  + off_step;
-        elseif strcmp(keyname, 't')|| strcmp(keyname, 'T')
+        elseif strcmp(keyname, 't')
             active_params.img_offset_y = active_params.img_offset_y  - off_step;
             
 
-        elseif strcmp(keyname, 'u')|| strcmp(keyname, 'U')
+        elseif strcmp(keyname, 'u')
             active_params.img_x = active_params.img_x  - size_step;
-        elseif strcmp(keyname, 'n')|| strcmp(keyname, 'N')
+        elseif strcmp(keyname, 'n')
             active_params.img_x = active_params.img_x  + size_step;
-        elseif strcmp(keyname, 'h')|| strcmp(keyname, 'H')
+        elseif strcmp(keyname, 'h')
             active_params.img_y = active_params.img_y  + size_step;
-        elseif strcmp(keyname, 'j')|| strcmp(keyname, 'J')
+        elseif strcmp(keyname, 'j')
             active_params.img_y = active_params.img_y  - size_step;
  
-        elseif strcmp(keyname, 'w')|| strcmp(keyname, 'W')
-            active_params.fixation_offset_y = active_params.fixation_offset_y  - size_step * 3;
-        elseif strcmp(keyname, 'z')|| strcmp(keyname, 'Z')
-            active_params.fixation_offset_y = active_params.fixation_offset_y  + size_step * 3;
-        elseif strcmp(keyname, 'a')|| strcmp(keyname, 'A')
-            active_params.fixation_offset_x = active_params.fixation_offset_x  - size_step * 3;
-        elseif strcmp(keyname, 's')|| strcmp(keyname, 'S')
-            active_params.fixation_offset_x = active_params.fixation_offset_x  + size_step * 3;
+        elseif strcmp(keyname, 'w')
+            active_params.fixation_offset_y = active_params.fixation_offset_y  - size_step * 2;
+        elseif strcmp(keyname, 'z')
+            active_params.fixation_offset_y = active_params.fixation_offset_y  + size_step * 2;
+        elseif strcmp(keyname, 'a')
+            active_params.fixation_offset_x = active_params.fixation_offset_x  - size_step * 2;
+        elseif strcmp(keyname, 's')
+            active_params.fixation_offset_x = active_params.fixation_offset_x  + size_step * 2;
 
+        elseif strcmp(keyname, '0')
+            if active_params.add_fundus_image_flag
+                disp(active_params.add_fundus_image_flag); disp('1')
+                active_params.add_fundus_image_flag = 0;
+            else
+                disp(active_params.add_fundus_image_flag); disp('2')
+                active_params.add_fundus_image_flag = 1;
+            end
+        elseif strcmp(keyname, '-')
+            active_params.fundus_img_scale = active_params.fundus_img_scale - 0.01;
+        elseif strcmp(keyname, '=')
+            active_params.fundus_img_scale = active_params.fundus_img_scale + 0.01;
+        elseif strcmp(keyname, '[')
+            active_params.image_rot = active_params.image_rot + img_rot_scale;
+        elseif strcmp(keyname, ']')
+            active_params.image_rot = active_params.image_rot - img_rot_scale;
+            
         elseif strcmp(keyname, '1')
             if active_params.add_grid_lines_flag == 1;
                 active_params.add_grid_lines_flag = 0;
@@ -189,7 +226,7 @@ end
                 active_params.add_square_flag = 1;
             end
             
-        elseif strcmp(keyname, '0')
+        elseif strcmp(keyname, 'q')
             if match < 0.1
                 match = 1;
                 params = active_params; % save params

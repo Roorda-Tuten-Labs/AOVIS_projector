@@ -15,7 +15,7 @@ function [window, oldVisualDebugLevel, oldSupressAllWarnings] = ...
 	% ---------- Window Setup ----------
 	% Supress checking behavior
 	oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-        oldSupressAllWarnings = Screen('Preference', 'SuppressAllWarnings', 1);
+    oldSupressAllWarnings = Screen('Preference', 'SuppressAllWarnings', 1);
     
 	% Hides the mouse cursor
 	HideCursor;
