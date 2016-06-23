@@ -13,7 +13,6 @@ function add_grid_lines(window, params, rect)
     rect_y_size = abs(rect(2) - rect(4));
     
     rect_size = mean([rect_x_size rect_y_size]);
-    params.pix_per_deg = 50;
 
     line_width_pix = 1;
     for deg = -20:1:20

@@ -83,7 +83,8 @@ catch  %#ok<*CTCH>
 	psychrethrow(psychlasterror);
     
 end
-
+    params = active_params;
+    
     % --- subroutines ---
     function redraw_image(window, background, cal, active_params)
         import white.*
@@ -203,7 +204,7 @@ end
         elseif strcmp(keyname, 'ESCAPE')|| strcmp(keyname, 'escape')
             xyz = 'end';
             forward = 1;
-            stim.cleanup(active_params);
+            stim.cleanup(active_params); % always save params of 'real' rectangle
             
         elseif strcmp(keyname, 'space') && disable_spacebar == 0
             forward = 1;

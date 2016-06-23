@@ -23,10 +23,11 @@ try
     % ---- Show stimulus
     [xyz, params] = stim.show_stimulus([params.x params.y params.LUM], ...
             params, cal, window, 1, 1);
-    
+        
+    stim.cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings);
 catch  %#ok<*CTCH>
    
-	stim.cleanup();
+	stim.cleanup(params);
 
 	% We throw the error again so the user sees the error description.
 	psychrethrow(psychlasterror);
