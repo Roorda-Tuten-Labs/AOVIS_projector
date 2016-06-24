@@ -6,14 +6,10 @@ function cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings)
     if nargin < 2
         oldVisualDebugLevel = 4;
     end
-    if nargin < 1
-        save_params = 0;    
-    else
-        save_params = params.save_params;
-    end
-    
-    if save_params == 1
-        save ./param/default_params.mat params
+    if nargin > 1
+        import white.*
+        fil.save_params(params, params.subject_id);
+        fil.save_params(params, 'default');
     end
     
     % Closes all windows.

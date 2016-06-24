@@ -4,7 +4,7 @@ import white.*
 
 params = [];
 if nargin < 1
-    params.uniqueHue = 'blue';
+    params.uniqueHue = 'white';
 else
     params.uniqueHue = uniqueHue;
 end
@@ -19,7 +19,10 @@ else
     params.color_space = color_space;
 end
 
-params.fixation_size = 2; % in pixels
+params.subject_id = 'default';
+params.debug_mode = 0;
+
+params.fixation_size = 4; % in pixels
 
 params.show_plot = 0;
 params.constant_stim = 1;
@@ -33,31 +36,6 @@ params.textsize = 20; % size of text on screen.
 % ---------- Color Setup ----------
 % Gets color values.
 params.LUM = 10;
-params.ncolors = 10; 
-params.nrepeats = 10;
-
-params.angle_bounds = [];
-if strcmp(params.color_space, 'xyY')
-    params.white = [1/3 1/3]';
-    params.RHO = 0.09;
-    params.angle_bounds.y1 = 40;
-    params.angle_bounds.y2 = 100;
-    params.angle_bounds.b1 = 175;
-    params.angle_bounds.b2 = 240;
-    params.blu = 210; % chromatic angle in degrees
-    params.yel = 78; % chromatic angle in degrees
-
-elseif strcmp(params.color_space, 'Luv')
-    params.white = xyTouv([1/3 1/3]');
-    params.RHO = 0.072;
-    Params.angle_bounds.y1 = 70;
-    params.angle_bounds.y2 = 130;
-    params.angle_bounds.b1 = 195;
-    params.angle_bounds.b2 = 255;
-    params.blu = 220; % chromatic angle in degrees
-    params.yel = 82; % chromatic angle in degrees
-
-end
 
 [params.display_width, params.display_height] = Screen('DisplaySize', ...
     params.screen);
@@ -74,16 +52,25 @@ params.img_y = 190;
 params.img_offset_x = 328;
 params.img_offset_y = 234;
 
+params.add_grid_lines_flag = 0;
+params.add_square_flag = 1;
+
+params.add_fundus_image_flag = 0; % start with fundus image off.
+params.fundus_img_offset_x = 400;
+params.fundus_img_offset_y = 500;
+params.fundus_img_scale = 0.6;
+
+params.pix_per_deg = 49.5;
+
+params.image_rot = 0;
+params.fundus_image_file = '';
+
 params.stimulus_shape = 'rectangle';
-params.psych_method = 'adjustment';
+params.psych_method = 'display';
 
 params.fixation_offset_x = params.pixel_width / 2; % center it
 params.fixation_offset_y = params.pixel_height / 2; % center it
 
 params.background = [0, 0, 0]; % defaults to black
-
-params.save_params = 0;
-
-params = gen.hue_specific_params(params.uniqueHue, params);
 
 end

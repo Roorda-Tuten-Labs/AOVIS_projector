@@ -42,6 +42,7 @@ for i=1:params.ncolors
     end
     
 end
+
 % randomize the sequence
 p = randperm(params.ntrials); % 1:ntrials
 color_sequence = color_sequence(p, :);
