@@ -1,6 +1,6 @@
 clearvars; close all;
 
-debug_mode = 0;
+%debug_mode = 0;
 
 % ---- Import local files
 import white.*
@@ -10,7 +10,7 @@ fil.add_depend();
 
 % ---- Get parameters for experiment or display stimulus
 params = gui.disp(); % only disp stimulus
-params.debug_mode = debug_mode;
+params.debug_mode = 0;
 
 try
     % ---- Set up window
