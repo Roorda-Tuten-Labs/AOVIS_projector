@@ -21,13 +21,22 @@ function display_image(window, background, params, color, left, right, ...
     % 1. Colors the entire window gray.
     Screen('FillRect', window, background);
 
-    % 2a. % 2a. Load image if desired
+    % 2. Load image if desired
     if params.add_fundus_image_flag
-        [ysize, xsize, zsize] = size(image_matrix);
-        rect = [0, 0, params.fundus_img_scale * xsize, params.fundus_img_scale * ysize];
-        disp(rect);
-        rect = CenterRectOnPoint(rect, params.img_offset_x, ...
-            params.img_offset_y);
+        [ysize, xsize, ~] = size(image_matrix);
+        rect = [0, 0, params.fundus_img_scale * xsize, ...
+            params.fundus_img_scale * ysize];
+        rect = CenterRectOnPoint(rect, params.fundus_img_offset_x, ...
+            params.fundus_img_offset_y);
+        % check to see if rectangle is off left or upper side of screen and
+        % adjust accordingly if so.
+        if rect(1) < 0
+            desiredsize = params.fundus_img_scale * xsize;
+            maxsize = desiredsize + rect(1);
+            size_diff_rel = maxsize / desiredsize;
+            image_matrix = image_matrix(:, xsize - floor(xsize * size_diff_rel):end);
+            rect(1) = 0;
+        end        
         if rect(2) < 0
             desiredsize = params.fundus_img_scale * ysize;
             maxsize = desiredsize + rect(2);
@@ -41,17 +50,17 @@ function display_image(window, background, params, color, left, right, ...
         Screen('PutImage', window, image_matrix, rect);
     end
     
-    % 2a. Create stimulus
+    % 3a. Create stimulus
     rect = [0, 0, params.img_x, params.img_y];
     rect = CenterRectOnPoint(rect, params.img_offset_x, ...
         params.img_offset_y);
     
-     % 2b. Add eccentricity grid lines if desired.
+    % 3b. Add eccentricity grid lines if desired.
     if params.add_grid_lines_flag
         stim.add_grid_lines(window, params, rect);
     end
     
-    % 2c. Add stimulus to screen
+    % 3c. Add stimulus to screen
     if params.add_square_flag
         if strcmp(params.stimulus_shape, 'circle')
             Screen('FillOval', window, color, rect);
@@ -65,7 +74,7 @@ function display_image(window, background, params, color, left, right, ...
     rect = [0, 0, params.fixation_size, params.fixation_size];
     rect = CenterRectOnPoint(rect, params.fixation_offset_x, ...
         params.fixation_offset_y);
-    Screen('FillOval', window, [180 180 180], rect);
+    Screen('FillOval', window, [200 200 200], rect);
     
     % 5. Write text to the window.
     currentTextRow = 0;

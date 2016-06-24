@@ -45,8 +45,8 @@ if ~strcmp(params.fundus_image_file, '')
     fundus_image = imread(params.fundus_image_file);
     fundus_image = fundus_image(:, :, 1);
 end
-params.image_rot = 0;
-params.add_fundus_image_flag = 0;
+%params.image_rot = 0; % always assume an image rotation of 0.
+params.add_fundus_image_flag = 0; % start with fundus image off.
 
 params.add_grid_lines_flag = 0;
 params.add_square_flag = 1;
@@ -116,21 +116,21 @@ end
                 a_, b_, 'ab', 'LUM', fundus_image);   
         end
         
-        pause(0.1); % prevent 'sticky keys'
+        pause(0.15); % prevent 'sticky keys'
 
     end
 
     function [a, b] = format_numbers(abc)
-        a = num2str(round(abc(1:2) * 1000) / 1000);
-        b = num2str(round(abc(3) * 1000) / 1000);
+        a = num2str(round(abc(1:2), 3));
+        b = num2str(round(abc(3), 3));
     end
 
     function [forward, active_params] = process_keys(keyname, active_params)
         import white.*
+        % --- process a control key: increase/decrease step size
         keyname = lower(keyname);
         if strcmp(keyname, 'control') || strcmp(keyname, 'leftcontrol') ...
                 || strcmp(keycode, 'rightcontrol')
-            disp('big step');
             if big_steps == 5
                 big_steps = 1;
             else
@@ -138,6 +138,7 @@ end
             end
         end
         
+        % --- set step sizes
         xy_step = 0.0025 * big_steps;
         LUM_step = 0.5 * big_steps;
         off_step = 2 * big_steps;
@@ -145,6 +146,7 @@ end
         img_rot_scale = 2 * big_steps;
         
         forward = 0;
+        
         % handle case of shift on windows OS
         if length(keyname) == 2
             if strcmp(keyname(2), 'right_shift')
@@ -154,6 +156,7 @@ end
             end
         end
         
+        % --- background square: color parameters
         if strcmp(keyname, 'left') || strcmp(keyname, 'leftarrow') 
             active_params.x = active_params.x - xy_step;
         elseif strcmp(keyname, 'rightarrow')|| strcmp(keyname, 'right')
@@ -168,6 +171,7 @@ end
         elseif strcmp(keyname, 'shift') || strcmp(keyname, 'rightshift')
             active_params.LUM = active_params.LUM - LUM_step;
 
+        % --- background square: size and shape
         elseif strcmp(keyname, 'f')
             active_params.img_offset_x = active_params.img_offset_x  - off_step;
         elseif strcmp(keyname, 'g')
@@ -177,7 +181,6 @@ end
         elseif strcmp(keyname, 't')
             active_params.img_offset_y = active_params.img_offset_y  - off_step;
             
-
         elseif strcmp(keyname, 'u')
             active_params.img_x = active_params.img_x  - size_step;
         elseif strcmp(keyname, 'n')
@@ -187,6 +190,7 @@ end
         elseif strcmp(keyname, 'j')
             active_params.img_y = active_params.img_y  - size_step;
  
+        % --- fixation parameters
         elseif strcmp(keyname, 'w')
             active_params.fixation_offset_y = active_params.fixation_offset_y  - size_step * 2;
         elseif strcmp(keyname, 'z')
@@ -196,23 +200,34 @@ end
         elseif strcmp(keyname, 's')
             active_params.fixation_offset_x = active_params.fixation_offset_x  + size_step * 2;
 
+        % --- fundus image parameters
         elseif strcmp(keyname, '0')
             if active_params.add_fundus_image_flag
-                disp(active_params.add_fundus_image_flag); disp('1')
                 active_params.add_fundus_image_flag = 0;
             else
-                disp(active_params.add_fundus_image_flag); disp('2')
                 active_params.add_fundus_image_flag = 1;
             end
+            
         elseif strcmp(keyname, '-')
             active_params.fundus_img_scale = active_params.fundus_img_scale - 0.01;
         elseif strcmp(keyname, '=')
             active_params.fundus_img_scale = active_params.fundus_img_scale + 0.01;
+            
         elseif strcmp(keyname, '[')
             active_params.image_rot = active_params.image_rot + img_rot_scale;
         elseif strcmp(keyname, ']')
             active_params.image_rot = active_params.image_rot - img_rot_scale;
             
+        elseif strcmp(keyname, 'l')
+            active_params.fundus_img_offset_x = active_params.fundus_img_offset_x  - off_step;
+        elseif strcmp(keyname, ';')
+            active_params.fundus_img_offset_x = active_params.fundus_img_offset_x  + off_step;
+        elseif strcmp(keyname, 'p')
+            active_params.fundus_img_offset_y = active_params.fundus_img_offset_y  - off_step;
+        elseif strcmp(keyname, '.')
+            active_params.fundus_img_offset_y = active_params.fundus_img_offset_y  + off_step;
+        
+        % --- Grid line parameters
         elseif strcmp(keyname, '1')
             if active_params.add_grid_lines_flag == 1;
                 active_params.add_grid_lines_flag = 0;
@@ -238,13 +253,16 @@ end
                 active_params = params;
             end
             
-        elseif strcmp(keyname, 'ESCAPE')|| strcmp(keyname, 'escape')
+        elseif strcmp(keyname, 'escape')
             xyz = 'end';
             forward = 1;
             stim.cleanup(active_params); % always save params of 'real' rectangle
             
         elseif strcmp(keyname, 'space') && disable_spacebar == 0
             forward = 1;
+            
+        elseif strcmp(keyname, '~')
+            save ./param/default_params.mat active_params
         end
 
     end
