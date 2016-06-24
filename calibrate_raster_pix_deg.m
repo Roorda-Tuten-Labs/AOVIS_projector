@@ -51,6 +51,7 @@ try
                     125, [params.img_offset_x, params.img_offset_y]);  
             Screen('Flip', window)
         end
+        pause(0.15);
     end
     % compute size of raster in pixels by meaning x and y dimension.
     disp([x_pixels y_pixels]);

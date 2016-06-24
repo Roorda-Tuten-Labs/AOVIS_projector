@@ -36,7 +36,7 @@ function display_image(window, cal, background, params, image_matrix)
         end
         
         image_matrix = imrotate(image_matrix, params.image_rot, 'crop');        
-        Screen('PutImage', window, image_matrix, rect);
+        Screen('PutImage', window, fliplr(image_matrix), rect);
     end
     
     % 3a. Create stimulus
@@ -79,12 +79,13 @@ function display_image(window, cal, background, params, image_matrix)
     % 5. Write text to the window.
     currentTextRow = 0;
     if params.add_match_flag
-        left = [num2str(round(params.match_CIEx, 3)) ', ' ...
-            num2str(round(params.match_CIEy, 3))];
-        right = num2str(round(params.match_LUM, 3));
+        left = [num2str(round(params.match_CIEx * 1000) / 1000) ', ' ...
+            num2str(round(params.match_CIEy * 1000) / 1000)];
+        right = num2str(round(params.match_LUM * 1000) / 1000);
     else
-        left = [num2str(round(params.x, 3)) ', ' num2str(round(params.y, 3))];
-        right = num2str(round(params.LUM, 3));
+        left = [num2str(round(params.x * 1000) / 1000) ', ' ...
+            num2str(round(params.y * 1000) / 1000)];
+        right = num2str(round(params.LUM * 1000) / 1000);
     end
     Screen('DrawText', window, ...
         sprintf([params.color_space(1:2) ' = %s, Lum = %s'], ...
