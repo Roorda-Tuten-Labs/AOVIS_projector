@@ -1,4 +1,4 @@
-function [xyz, params] = show_stimulus(xyY, params, cal, window, ...
+function [xyz, params] = control_image(xyY, params, cal, window, ...
     close_at_end, disable_spacebar)
 
 import white.*
@@ -42,7 +42,7 @@ end
 
 %params.image_rot = 0; % always assume an image rotation of 0.
 params.add_fundus_image_flag = 0; % start with fundus image off.
-params.add_pins_flag = 1; % pins are set to zero and off.
+params.add_pins_flag = 0; % pins are set to zero and off.
 
 % In case matching stimulus is added, keep track of which to change.
 params.add_match_flag = 0;
@@ -143,7 +143,8 @@ end
             
         end
         % remove pin locations starting with the last one added
-        if strcmp(keyname, 'backspace') || strcmp(keyname, 'delete')
+        if any(strcmp(keyname, 'backspace') || strcmp(keyname, 'delete')) ...
+                && params.add_pins_flag
             params.pin_locations = params.pin_locations(1:end-1, :);
         end
         

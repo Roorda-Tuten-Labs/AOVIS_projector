@@ -10,7 +10,7 @@ fil.add_depend();
 
 % ---- Get parameters for experiment or display stimulus
 params = gui.disp(); % only disp stimulus
-params.debug_mode = 1;
+params.debug_mode = 0;
 
 try
     % ---- Set up window
@@ -21,7 +21,7 @@ try
     cal = gen.cal_struct(params.cal_file, params.cal_dir);
 
     % ---- Show stimulus
-    [xyz, params] = stim.show_stimulus([params.x params.y params.LUM], ...
+    [xyz, params] = stim.control_image([params.x params.y params.LUM], ...
             params, cal, window, 1, 1);
         
     stim.cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings);

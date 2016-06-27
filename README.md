@@ -28,14 +28,14 @@ A program for controlling an external projector during  psychophysical experimen
 * `[, ]` rotate the fundus image.
 
 ### Setting fixation dot or pins with the mouse.
-`tab` activate the next mouse.
-`left click` move the fixation cross hair to the selected location.
-`right click` drop a pin at the selected location.
+* `tab` activate the next mouse.
+* `left click` move the fixation cross hair to the selected location.
+* `right click` drop a pin at the selected location.
 
 ### Pins
-`tab + right click` drops a pin.
-`backspace or delete` removes the last pin.
-`\` hides or shows pin locations.
+* `tab + right click` drops a pin.
+* `backspace or delete` removes the last pin.
+* `\` hides or shows pin locations.
 
 ### Controling the luminance and chromaticity of the background.
 * `enter, shift` increase and decrease the background or matching square.

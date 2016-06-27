@@ -56,9 +56,12 @@ try
     pixels = mean([x_pixels y_pixels]);
     params.pix_per_deg = pixels / raster_size;
     disp(['pix/deg: ' num2str(params.pix_per_deg)]);
+
+    % save new params
+    csvwrite('param/pix_per_deg.txt', 49.1);
     
-    % cleanup and save new params
-    stim.cleanup(params);
+    % cleanup
+    stim.cleanup();
     
 catch  %#ok<*CTCH>
    

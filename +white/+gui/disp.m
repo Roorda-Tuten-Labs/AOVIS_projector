@@ -171,6 +171,10 @@ function params = disp()
 
         params.psych_method = 'display';
         
+        % read pix per degree from txt file. This should only be edited
+        % from calibrate_raster_pix_deg.
+        params.pix_per_deg = csvread('param/pix_per_deg.txt');
+        
     end
 
     close all;

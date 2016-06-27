@@ -62,8 +62,6 @@ params.fundus_img_scale = 0.6;
 
 params.pin_locations = [];
 
-params.pix_per_deg = 49.5;
-
 params.image_rot = 0;
 params.fundus_image_file = '';
 

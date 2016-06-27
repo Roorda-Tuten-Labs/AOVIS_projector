@@ -30,7 +30,7 @@ if strcmp(params.psych_method, 'forced choice')
         [params, xyz] = exp.run_forced_choice_exp(window, params, cal, 'white');
 
         % ---- Show final stimulus
-        stim.show_stimulus([xyz(1) xyz(2) params.LUM]', params, window, 0, cal);
+        stim.control_image([xyz(1) xyz(2) params.LUM]', params, window, 0, cal);
 
         stim.cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings);
 
@@ -45,7 +45,7 @@ elseif strcmp(params.psych_method, 'adjustment')
     [params, xyz] = exp.run_adjustment_exp(window, params, cal);
 
 elseif strcmp(params.psych_method, 'display')
-    [xyz, params] = stim.show_stimulus([params.x params.y params.LUM], ...
+    [xyz, params] = stim.control_image([params.x params.y params.LUM], ...
         params, cal, window, 1, 1);
 end
 
