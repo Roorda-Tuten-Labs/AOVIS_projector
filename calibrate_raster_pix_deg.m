@@ -41,14 +41,12 @@ try
         if forward == 0
             x_pixels = params.img_x;
             y_pixels = params.img_y;
-
-            xcoords = [-x_pixels / 2, x_pixels / 2 0 0];
-            ycoords = [0 0 -y_pixels / 2, y_pixels / 2];
-            all_coords = [xcoords; ycoords];
-
+            loc = [params.img_offset_x, params.img_offset_y];
+            
             % Draw cross-hairs
-            Screen('DrawLines', window, all_coords, line_width_pix, ...
-                    125, [params.img_offset_x, params.img_offset_y]);  
+            stim.add_cross_hairs(window, [x_pixels, y_pixels], loc, ...
+                line_width_pix, 125);
+
             Screen('Flip', window)
         end
         pause(0.15);

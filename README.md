@@ -6,9 +6,7 @@ A program for controlling an external projector during  psychophysical experimen
 
 ## General usage
 
-## Parameters
-
-## Keyboard Keys
+## Keyboard and mouse parameters
 
 ### Saving, exiting
 * ``` save current set of parameters. this will overwrite the parameter file associated with the active subject.
@@ -19,6 +17,7 @@ A program for controlling an external projector during  psychophysical experimen
 * `2` turn on/off background square. this square is typically used as a bleaching field or background and overlaid on the SLO raster.
 * `5` turn on/off a second square. this square is used for color matching experiments.
 * `0` turn on/off a fundus image. this switch requires a file to be loaded in the parameters gui.
+* '\' turn pins on/off.
 
 ### Moving/scaling objects
 * `w, a, s, z` move the fixation dot.
@@ -28,6 +27,16 @@ A program for controlling an external projector during  psychophysical experimen
 * `-, =` scale the fundus image.
 * `[, ]` rotate the fundus image.
 
+### Setting fixation dot or pins with the mouse.
+`tab` activate the next mouse.
+`left click` move the fixation cross hair to the selected location.
+`right click` drop a pin at the selected location.
+
+### Pins
+`tab + right click` drops a pin.
+`backspace or delete` removes the last pin.
+`\` hides or shows pin locations.
+
 ### Controling the luminance and chromaticity of the background.
 * `enter, shift` increase and decrease the background or matching square.
 * `arrow keys` change the chromaticity of the background or matching square.
@@ -36,6 +45,8 @@ A program for controlling an external projector during  psychophysical experimen
 * `control` toggle between large and fine steps across all of the scaling/movement keys.
 
 ## Fundus image projection
+
+Load a fundus image, scale it properly and then select regions of interest to image.
 
 ## Calibrate grid
 

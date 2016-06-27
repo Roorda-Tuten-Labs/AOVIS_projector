@@ -42,6 +42,7 @@ end
 
 %params.image_rot = 0; % always assume an image rotation of 0.
 params.add_fundus_image_flag = 0; % start with fundus image off.
+params.add_pins_flag = 1; % pins are set to zero and off.
 
 % In case matching stimulus is added, keep track of which to change.
 params.add_match_flag = 0;
@@ -114,6 +115,46 @@ end
         img_rot_scale = 2 * big_steps;
         
         forward = 0;
+
+        % give control to cursor
+        if strcmp(keyname, 'tab')
+            % Turn cursor back on
+            ShowCursor;
+            
+            % Wait for Click
+            [mouseindex, ~, ~] = GetMouseIndices();
+            mouseindex = mouseindex(end); % use the highest index
+            KbWait(mouseindex);
+            [x, y, buttons, ~, ~, ~] = GetMouse();
+
+            % update position of fixation
+            if buttons(1)
+                params.fixation_offset_x = x;
+                params.fixation_offset_y = y;
+            elseif buttons(2)
+                params.pin_locations = [params.pin_locations; x y];
+                params.add_pins_flag = 1;
+            else
+                disp('button click not understood.');
+            end            
+                       
+            % Turn cursor off and return to program
+            HideCursor;
+            
+        end
+        % remove pin locations starting with the last one added
+        if strcmp(keyname, 'backspace') || strcmp(keyname, 'delete')
+            params.pin_locations = params.pin_locations(1:end-1, :);
+        end
+        
+        % turn on/off display of pins
+        if strcmp(keyname, '\|') || strcmp(keyname, '\')
+            if params.add_pins_flag
+                params.add_pins_flag = 0;
+            else
+                params.add_pins_flag = 1;
+            end
+        end
         
         % handle case of shift on windows OS
         if length(keyname) == 2

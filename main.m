@@ -10,7 +10,7 @@ fil.add_depend();
 
 % ---- Get parameters for experiment or display stimulus
 params = gui.disp(); % only disp stimulus
-params.debug_mode = 0;
+params.debug_mode = 1;
 
 try
     % ---- Set up window

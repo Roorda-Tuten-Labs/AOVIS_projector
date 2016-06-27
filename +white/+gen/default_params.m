@@ -60,6 +60,8 @@ params.fundus_img_offset_x = 400;
 params.fundus_img_offset_y = 500;
 params.fundus_img_scale = 0.6;
 
+params.pin_locations = [];
+
 params.pix_per_deg = 49.5;
 
 params.image_rot = 0;

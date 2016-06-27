@@ -70,11 +70,19 @@ function display_image(window, cal, background, params, image_matrix)
         Screen('FillRect', window, rgb, rect);
     end
     
-	% 4. Fixation point
-    rect = [0, 0, params.fixation_size, params.fixation_size];
-    rect = CenterRectOnPoint(rect, params.fixation_offset_x, ...
-        params.fixation_offset_y);
-    Screen('FillOval', window, [200 200 200], rect);
+    if params.add_pins_flag && ~isempty(params.pin_locations)
+        for p = 1:length(params.pin_locations(:, 1))
+            pin = params.pin_locations(p, :);
+            rect = [0, 0, 4, 4]; % pin size set here (index 3&4).
+            rect = CenterRectOnPoint(rect, pin(1), pin(2));
+            Screen('FillOval', window, [200 200 200], rect); % 3rd arg = color.
+        end
+    end
+    
+	% 4. Fixation cross
+    stim.add_cross_hairs(window, params.fixation_size, ...
+        [params.fixation_offset_x, params.fixation_offset_y], 2, [100 200, 100]);
+
     
     % 5. Write text to the window.
     currentTextRow = 0;
