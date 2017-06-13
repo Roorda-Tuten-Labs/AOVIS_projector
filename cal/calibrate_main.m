@@ -1,13 +1,15 @@
-calibration_file_name = 'data/roorda_march12_2014_raw_data_EDIT.csv';
+clearvars;
+close all;
+
 % Create calibration structure;
 cal = [];
 
 % Script parameters
-cal.describe.nAverage = 2;  
-cal.describe.nMeas = 16;
+cal.describe.nAverage = 1;  
+cal.describe.nMeas = 3;
 cal.nDevices = 3;
 cal.nPrimaryBases = 1;
-cal.describe.S = [380 1 401];
+cal.describe.S = [380 4 101]; % default for PR650
 cal.manual.use = 1;
 
 % Enter screen
@@ -17,17 +19,16 @@ cal.describe.whichScreen = 0;
 cal.describe.dacsize = ScreenDacBits(0);
 nLevels = 2 ^ cal.describe.dacsize;
 
-cal.manual.photometer = 1;
-
+cal.manual.photometer = 0;
 
 % Prompt for background values.  The default is a guess as to what
 % produces one-half of maximum output for a typical CRT.
 defBgColor = [190 190 190]' / 255;
-thePrompt = sprintf(...
-'Enter RGB values for background (range 0-1) as a row vector [%0.3f %0.3f %0.3f]: ',...
-                    defBgColor(1), defBgColor(2), defBgColor(3));
+% thePrompt = sprintf(...
+% 'Enter RGB values for background (range 0-1) as a row vector [%0.3f %0.3f %0.3f]: ',...
+%                     defBgColor(1), defBgColor(2), defBgColor(3));
 while 1
-	cal.bgColor = input(thePrompt)';
+	cal.bgColor = []; %input(thePrompt)';
 	if isempty(cal.bgColor)
 		cal.bgColor = defBgColor;
 	end
@@ -43,10 +44,10 @@ while 1
 end
 
 % Get distance from meter to screen.
-defDistance = .25;
-theDataPrompt = sprintf(...
-    'Enter distance from meter to screen (in meters): [%g]: ', defDistance);
-cal.describe.meterDistance = input(theDataPrompt);
+defDistance = 1;
+% theDataPrompt = sprintf(...
+%     'Enter distance from meter to screen (in meters): [%g]: ', defDistance);
+cal.describe.meterDistance = []; %input(theDataPrompt);
 if isempty(cal.describe.meterDistance)
   cal.describe.meterDistance = defDistance;
 end
@@ -83,30 +84,27 @@ end
 
 % Fitting parameters
 cal.describe.gamma.fitType = 'cubic interpolation';
+%%
+% cal_data = csvread(calibration_file_name);
+% cal_data = util.remove_zero_rows(cal_data);
+% cal_data = util.remove_zero_cols(cal_data);
 
+[cal_data, input_RGB] = collect_calibration(cal.describe.nMeas);
 
-cal_data = csvread(calibration_file_name);
+% ---- fill in ambient parameters
+ambient_index = ~any(input_RGB, 2);
+mean_ambient = mean(cal_data(:, ambient_index), 2);
 
 % ---- Subtract off ambient light from each measurment
 corrected_data = zeros(cal.describe.S(3), cal.describe.nMeas * 3);
-ave_ambient = zeros(cal.describe.S(3), 1);
-k = 1;
-for i=0:2
-    ambient_index = 2 + i * (cal.describe.nMeas + 1);
-    ambient = cal_data(:, ambient_index);
-    ave_ambient = ave_ambient + ambient;
-    for j=1:cal.describe.nMeas
-        ind = ambient_index + j;
-        corrected_data(:, k) = cal_data(:, ind) - ambient;
-        k = k + 1;
-    end
+non_ambient = any(input_RGB, 2);
+for j=1:cal.describe.nMeas * 3
+    corrected_data(:, j) = cal_data(:, j) - mean_ambient;
 end
-% ---- fill in ambient parameters
-ave_ambient = ave_ambient / cal.describe.nMeas;
 
-
+% change into a n by 3 matrix.
 corrected_data = reshape(corrected_data, ...
-    cal.describe.S(3) * cal.describe.nMeas,cal.nDevices);
+    cal.describe.S(3) * cal.describe.nMeas, cal.nDevices);
 
 % Pre-process data to get rid of negative values.
 corrected_data = EnforcePos(corrected_data);
@@ -118,12 +116,11 @@ cal.rawdata.mon = corrected_data;
 disp('Computing linear models');
 cal = CalibrateFitLinMod(cal);
 
-cal.P_ambient = ave_ambient;
+cal.P_ambient = mean_ambient;
 cal.S_ambient = cal.S_device;
 cal.T_ambient = eye(cal.describe.S(3));
 
-
-% Fit gamma functions.
+% ------- Fit gamma functions. -------- %
 
 % Define input settings for the measurements
 mGammaInputRaw = linspace(0, 1, cal.describe.nMeas+1)';
@@ -141,7 +138,7 @@ mGammaMassaged = NormalizeGamma(mGammaMassaged);
 
 %Gamma function fittings
 nInputLevels = 1024;
-gammaInputFit = linspace(0,1,nInputLevels)';
+gammaInputFit = linspace(0, 1, nInputLevels)';
 % append 0 at beginning so cubic fitting goes to 0
 r_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 1)'], ...
     gammaInputFit, 'cubic');
@@ -155,6 +152,7 @@ cal.gammaTable = [r_table g_table b_table];
 
 fprintf(1, '\nSaving to %s.mat\n', newFileName);
 SaveCalFile(cal, newFileName);
+SaveCalFile(cal, newFileName, 'files');
     
 plot_cal_data(cal);
 

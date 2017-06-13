@@ -9,7 +9,7 @@ A program for controlling an external projector during  psychophysical experimen
 ## Keyboard and mouse parameters
 
 ### Saving, exiting
-* ``` save current set of parameters. this will overwrite the parameter file associated with the active subject.
+* `\`` save current set of parameters. this will overwrite the parameter file associated with the active subject.
 * `escape` quit the program and save the last set of parameters.
 
 ### Turning features on and off
@@ -17,7 +17,7 @@ A program for controlling an external projector during  psychophysical experimen
 * `2` turn on/off background square. this square is typically used as a bleaching field or background and overlaid on the SLO raster.
 * `5` turn on/off a second square. this square is used for color matching experiments.
 * `0` turn on/off a fundus image. this switch requires a file to be loaded in the parameters gui.
-* '\' turn pins on/off.
+* `\\` turn pins on/off.
 
 ### Moving/scaling objects
 * `w, a, s, z` move the fixation dot.
