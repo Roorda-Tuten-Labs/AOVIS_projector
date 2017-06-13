@@ -1,27 +1,63 @@
 function plot_cal_data(cal)
-
+% Plot the gamut, gamma and wavelength spectrum from a cal file organized
+% in the typical Psychtoolbox format.
+%
+% USAGE
+% plot_cal_data(cal)
+%
+% INPUT
+% cal   cal can be either a structure or the name of a cal structure in the
+%       files directory that will be loaded.
+%
+% EXAMPLE
+% cal = LoadCalFile('RoordaLab_projector_9June2017', 1, 'files');
+% plot_cal_data(cal);
+% 
+% RETURNS
+% Three plots. Each is saved in img directory as an svg file.
+%
 if nargin < 1
-    cal = LoadCalFile('RoordaProjectorMar4');
+    cal = LoadCalFile('Feb13_2014a', 1, 'files');
 end
 
+if ischar(cal)
+    cal = LoadCalFile(cal, 1, 'files');
+end
+
+% save location in img dir. based on monitor name and date of calibration.
+if isfield(cal.describe, 'date')
+    measure_date = strsplit(cal.describe.date);
+else
+    measure_date = {'unknown'};
+end
+if isfield(cal.describe, 'monitor')
+    monitor_name = strrep(cal.describe.monitor, ' ', '_');
+else
+    monitor_name = 'unknown';
+end
+basedir = fullfile('img', monitor_name, measure_date{1});
+
+% for color of RGB measurements.
 colorCycle = [1 0 0; 0 0.6 0; 0 0 1];
 
-figure(1); clf;
+% -------- PLOTS --------- %
+% 1. spectrum of primaries
+fig = figure(1);
 
 % Change to new colors.
 set(gca, 'ColorOrder', colorCycle, ...
     'NextPlot', 'replacechildren');
 
 plot(SToWls(cal.S_device), cal.P_device, 'LineWidth', 2.5);
-xlabel('Wavelength (nm)', 'FontSize', 20);
-ylabel('Power',  'FontSize', 20);
-title('Primaries', 'Fontsize', 20, 'Fontname', 'helvetica');
-axis([380, 780, -Inf, Inf]);
-set(gca,'fontsize', 20, 'linewidth', 1, 'TickDir', 'out', ...
-    'TickLength', [0.05 0.0]);
-box off;
 
-figure(2);
+title('Primaries', 'Fontsize', 20, 'Fontname', 'helvetica');
+axis([380, 780, 0, Inf]);
+
+plots.nice_axes('wavelength (nm)', 'power', 20)
+plots.save_fig(fullfile(basedir, 'primaries.svg'), fig)
+
+% 2. CIE plot of gamut
+fig = figure(2);
 
 T_xyz1931 = csvread('data/ciexyz31.csv')';
 S_xyz1931 = [380, 5, 81];
@@ -43,28 +79,24 @@ plot([gun_xyz(1, 1) gun_xyz(3, 1)], ...
 axis square
 xlim([0, 0.9]);
 ylim([0, 0.9]);
-set(gca,'fontsize', 20, 'linewidth', 1, 'TickDir', 'out', ...
-    'TickLength', [0.05 0.0]);
-box off;
-xlabel('x');
-ylabel('y');
 
+plots.nice_axes('CIE x', 'CIE y', 20)
+plots.save_fig(fullfile(basedir, 'CIExy_plot.svg'), fig)
 
-figure(3); clf;
+% 3. Gamma functions
+fig = figure(3);
+
 set(gca, 'ColorOrder', colorCycle, ...
     'NextPlot', 'replacechildren');
 plot(cal.rawdata.rawGammaInput, cal.rawdata.rawGammaTable, '+', ...
     'MarkerSize', 20);
-xlabel('Input value', 'FontSize', 20);
-ylabel('Normalized output', 'FontSize', 20);
-title('Gamma functions', 'Fontsize', 20, 'Fontname', 'helvetica');
-hold on
+hold on;
 plot(cal.gammaInput, cal.gammaTable, 'LineWidth', 2);
-hold off
-figure(gcf);
-set(gca,'fontsize', 20, 'linewidth', 1, 'TickDir', 'out', ...
-    'TickLength', [0.05 0.0]);
-xlim([-0.05 1.05]);
-ylim([-0.05 1.05]);
-box off;
-drawnow;
+
+title('Gamma functions', 'Fontsize', 20, 'Fontname', 'helvetica');
+
+xlim([0 1.0]);
+ylim([0 1.0]);
+
+plots.nice_axes('input value', 'normalized output', 20);
+plots.save_fig(fullfile(basedir, 'gamma_functions.svg'), fig)

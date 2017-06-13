@@ -5,12 +5,13 @@ close all;
 cal = [];
 
 % Script parameters
-cal.describe.nAverage = 1;  
-cal.describe.nMeas = 3;
-cal.nDevices = 3;
-cal.nPrimaryBases = 1;
+cal.describe.nAverage = 1; % currently only handles 1
+cal.describe.nMeas = 65; % should be power of 2 + 1 (i.e. 9, 17, 33, 65)
+cal.nDevices = 3; % LEDs
+cal.nPrimaryBases = 1; % No idea what this does
 cal.describe.S = [380 4 101]; % default for PR650
-cal.manual.use = 1;
+cal.manual.use = 0; % use automated routine
+cal.manual.photometer = 0;
 
 % Enter screen
 cal.describe.whichScreen = 0;
@@ -19,10 +20,57 @@ cal.describe.whichScreen = 0;
 cal.describe.dacsize = ScreenDacBits(0);
 nLevels = 2 ^ cal.describe.dacsize;
 
-cal.manual.photometer = 0;
+
+% --- Fill in descriptive information --- %
+computerInfo = Screen('Computer');
+hz = Screen('NominalFrameRate', cal.describe.whichScreen);
+cal.describe.caltype = 'monitor';
+if isfield(computerInfo, 'consoleUserName')
+    cal.describe.computer = sprintf('%s''s %s, %s', ...
+        computerInfo.consoleUserName, computerInfo.machineName, ...
+        computerInfo.system);
+else
+    % Better than nothing:
+    cal.describe.computer = OSName;
+end
+cal.describe.driver = sprintf('%s %s','unknown_driver','unknown_driver_version');
+cal.describe.hz = hz;
+cal.describe.program = sprintf('calibration.m, background set to [%g,%g,%g]',...
+                               cal.bgColor(1), cal.bgColor(2), cal.bgColor(3));
+cal.describe.who = input('Enter your name: ','s');
+
+% Fitting parameters
+cal.describe.gamma.fitType = 'cubic interpolation';
+% -------------------------------------- %
+
+% ---- Get input from user ---- %
+cal.describe.monitor = input('Enter monitor name: ','s');
+cal.describe.date = sprintf('%s %s',date,datestr(now,14));
+cal.describe.comment = input('Describe the calibration: ','s');
+
+% name of the calibration that will be used for saving
+defaultFileName = 'monitor';
+thePrompt = sprintf('Enter calibration filename (for saving) [%s]: ',...
+    defaultFileName);
+newFileName = input(thePrompt,'s');
+if isempty(newFileName)
+    newFileName = defaultFileName;
+end
+
+% Get distance from meter to screen.
+% NOTE: for Maxwellian view, need to consider what to write here. This is
+% presumably important for luminance computation.
+defDistance = 1;
+% theDataPrompt = sprintf(...
+%     'Enter distance from meter to screen (in meters): [%g]: ', defDistance);
+cal.describe.meterDistance = []; %input(theDataPrompt);
+if isempty(cal.describe.meterDistance)
+  cal.describe.meterDistance = defDistance;
+end
 
 % Prompt for background values.  The default is a guess as to what
 % produces one-half of maximum output for a typical CRT.
+% NOTE: Not sure exactly what this is used for.
 defBgColor = [190 190 190]' / 255;
 % thePrompt = sprintf(...
 % 'Enter RGB values for background (range 0-1) as a row vector [%0.3f %0.3f %0.3f]: ',...
@@ -43,54 +91,11 @@ while 1
 	end
 end
 
-% Get distance from meter to screen.
-defDistance = 1;
-% theDataPrompt = sprintf(...
-%     'Enter distance from meter to screen (in meters): [%g]: ', defDistance);
-cal.describe.meterDistance = []; %input(theDataPrompt);
-if isempty(cal.describe.meterDistance)
-  cal.describe.meterDistance = defDistance;
-end
-
-% Fill in descriptive information
-computerInfo = Screen('Computer');
-hz = Screen('NominalFrameRate', cal.describe.whichScreen);
-cal.describe.caltype = 'monitor';
-if isfield(computerInfo, 'consoleUserName')
-    cal.describe.computer = sprintf('%s''s %s, %s', ...
-        computerInfo.consoleUserName, computerInfo.machineName, ...
-        computerInfo.system);
-else
-    % Better than nothing:
-    cal.describe.computer = OSName;
-end
-cal.describe.monitor = input('Enter monitor name: ','s');
-cal.describe.driver = sprintf('%s %s','unknown_driver','unknown_driver_version');
-cal.describe.hz = hz;
-cal.describe.who = input('Enter your name: ','s');
-cal.describe.date = sprintf('%s %s',date,datestr(now,14));
-cal.describe.program = sprintf('calibration.m, background set to [%g,%g,%g]',...
-                               cal.bgColor(1), cal.bgColor(2), cal.bgColor(3));
-cal.describe.comment = input('Describe the calibration: ','s');
-
-
-% Get name
-defaultFileName = 'monitor';
-thePrompt = sprintf('Enter calibration filename [%s]: ',defaultFileName);
-newFileName = input(thePrompt,'s');
-if isempty(newFileName)
-    newFileName = defaultFileName;
-end
-
-% Fitting parameters
-cal.describe.gamma.fitType = 'cubic interpolation';
-%%
-% cal_data = csvread(calibration_file_name);
-% cal_data = util.remove_zero_rows(cal_data);
-% cal_data = util.remove_zero_cols(cal_data);
-
+% -------------------------------------- %
+% This is where the measurements happen.
 [cal_data, input_RGB] = collect_calibration(cal.describe.nMeas);
 
+% Now analyze the measurements
 % ---- fill in ambient parameters
 ambient_index = ~any(input_RGB, 2);
 mean_ambient = mean(cal_data(:, ambient_index), 2);
