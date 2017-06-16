@@ -5,7 +5,8 @@ close all;
 cal = [];
 
 % Script parameters
-cal.describe.nAverage = 1; % currently only handles 1
+cal.describe.whichScreen = 0; % Enter screen
+cal.describe.nAverage = 1; % currently only handles 1. should add this option in the future.
 cal.describe.nMeas = 65; % should be power of 2 + 1 (i.e. 9, 17, 33, 65)
 cal.nDevices = 3; % LEDs
 cal.nPrimaryBases = 1; % No idea what this does
@@ -13,13 +14,11 @@ cal.describe.S = [380 4 101]; % default for PR650
 cal.manual.use = 0; % use automated routine
 cal.manual.photometer = 0;
 
-% Enter screen
-cal.describe.whichScreen = 0;
-
 % Find out about screen
-cal.describe.dacsize = ScreenDacBits(0);
+cal.describe.dacsize = ScreenDacBits(cal.describe.whichScreen);
+% This is used below when cubic interpolating the LUT. Must be based on the
+%  bit depth of the graphics card.
 nLevels = 2 ^ cal.describe.dacsize;
-
 
 % --- Fill in descriptive information --- %
 computerInfo = Screen('Computer');
@@ -115,15 +114,15 @@ corrected_data = reshape(corrected_data, ...
 corrected_data = EnforcePos(corrected_data);
 cal.rawdata.mon = corrected_data;
 
+cal.P_ambient = mean_ambient;
+cal.S_ambient = cal.S_device;
+cal.T_ambient = eye(cal.describe.S(3));
+
 % Use data to compute best spectra according to desired
 % linear model.  We use SVD to find the best linear model,
 % then scale to best approximate maximum
 disp('Computing linear models');
 cal = CalibrateFitLinMod(cal);
-
-cal.P_ambient = mean_ambient;
-cal.S_ambient = cal.S_device;
-cal.T_ambient = eye(cal.describe.S(3));
 
 % ------- Fit gamma functions. -------- %
 
@@ -142,7 +141,7 @@ mGammaMassaged = NormalizeGamma(mGammaMassaged);
 %cal = CalibrateFitGamma(cal, 2^cal.describe.dacsize);
 
 %Gamma function fittings
-nInputLevels = 1024;
+nInputLevels = nLevels;
 gammaInputFit = linspace(0, 1, nInputLevels)';
 % append 0 at beginning so cubic fitting goes to 0
 r_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 1)'], ...
