@@ -13,6 +13,7 @@ cal.nPrimaryBases = 1; % No idea what this does
 cal.describe.S = [380 4 101]; % default for PR650
 cal.manual.use = 0; % use automated routine
 cal.manual.photometer = 0;
+cal.describe.gamma.fitType = 'sigmoid';
 
 % Find out about screen
 cal.describe.dacsize = ScreenDacBits(cal.describe.whichScreen);
@@ -125,37 +126,39 @@ disp('Computing linear models');
 cal = CalibrateFitLinMod(cal);
 
 % ------- Fit gamma functions. -------- %
+if strcmp(cal.describe.gamma.fitType, 'interp')
+    % Define input settings for the measurements
+    mGammaInputRaw = linspace(0, 1, cal.describe.nMeas+1)';
+    mGammaInputRaw = mGammaInputRaw(2:end);
 
-% Define input settings for the measurements
-mGammaInputRaw = linspace(0, 1, cal.describe.nMeas+1)';
-mGammaInputRaw = mGammaInputRaw(2:end);
+    %cal.rawdata.rawGammaInput = mGammaInputRaw;
 
-cal.rawdata.rawGammaInput = mGammaInputRaw;
+    mGammaMassaged = cal.rawdata.rawGammaTable(:,1:cal.nDevices);
+    for i = 1:cal.nDevices
+        mGammaMassaged(:,i) = MakeGammaMonotonic(HalfRect(mGammaMassaged(:,i)));
+    end
 
-mGammaMassaged = cal.rawdata.rawGammaTable(:,1:cal.nDevices);
-for i = 1:cal.nDevices
-    mGammaMassaged(:,i) = MakeGammaMonotonic(HalfRect(mGammaMassaged(:,i)));
+    mGammaMassaged = NormalizeGamma(mGammaMassaged);
+    %cal = CalibrateFitGamma(cal, 2^cal.describe.dacsize);
+
+    %Gamma function fittings
+    gammaInputFit = linspace(0, 1, nLevels)';
+    % append 0 at beginning so cubic fitting goes to 0
+    r_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 1)'], ...
+        gammaInputFit, 'pchip');
+    g_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 2)']', ...
+        gammaInputFit, 'pchip');
+    b_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 3)']', ...
+        gammaInputFit, 'pchip');
+
+    cal.gammaInput = gammaInputFit;
+    cal.gammaTable = [r_table g_table b_table];
+else
+    cal = CalibrateFitGamma(cal, nLevels);
 end
 
-mGammaMassaged = NormalizeGamma(mGammaMassaged);
-%cal = CalibrateFitGamma(cal, 2^cal.describe.dacsize);
-
-%Gamma function fittings
-nInputLevels = nLevels;
-gammaInputFit = linspace(0, 1, nInputLevels)';
-% append 0 at beginning so cubic fitting goes to 0
-r_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 1)'], ...
-    gammaInputFit, 'cubic');
-g_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 2)']', ...
-    gammaInputFit, 'cubic');
-b_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 3)']', ...
-    gammaInputFit, 'cubic');
-
-cal.gammaInput = gammaInputFit;
-cal.gammaTable = [r_table g_table b_table];
-
 fprintf(1, '\nSaving to %s.mat\n', newFileName);
-SaveCalFile(cal, newFileName);
+%SaveCalFile(cal, newFileName);
 SaveCalFile(cal, newFileName, 'files');
     
 plot_cal_data(cal);

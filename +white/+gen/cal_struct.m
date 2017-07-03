@@ -18,6 +18,6 @@ function cal = cal_struct(cal_file, cal_dir)
     end
     
     cal = SetSensorColorSpace(cal, T_xyz, S_xyz);
-    cal = SetGammaMethod(cal,0);
+    cal = SetGammaMethod(cal, 0);
 
 end
