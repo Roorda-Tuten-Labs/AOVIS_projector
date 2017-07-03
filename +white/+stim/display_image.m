@@ -81,7 +81,7 @@ function display_image(window, cal, background, params, image_matrix)
     
 	% 4. Fixation cross
     stim.add_cross_hairs(window, params.fixation_size, ...
-        [params.fixation_offset_x, params.fixation_offset_y], 2, [100 200, 100]);
+        [params.fixation_offset_x, params.fixation_offset_y], 2, 255);
 
     
     % 5. Write text to the window.

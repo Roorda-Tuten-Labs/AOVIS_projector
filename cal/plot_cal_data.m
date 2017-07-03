@@ -26,7 +26,9 @@ end
 
 % save location in img dir. based on monitor name and date of calibration.
 if isfield(cal.describe, 'date')
-    measure_date = strsplit(cal.describe.date);
+    %measure_date = strsplit(cal.describe.date);
+    endind = strfind(cal.describe.date, ' ');
+    measure_date = cal.describe.date(1:endind(1)-1);
 else
     measure_date = {'unknown'};
 end
@@ -35,7 +37,8 @@ if isfield(cal.describe, 'monitor')
 else
     monitor_name = 'unknown';
 end
-basedir = fullfile('img', monitor_name, measure_date{1});
+basedir = fullfile('img', monitor_name, measure_date);
+%basedir = fullfile('img', monitor_name, measure_date{1});
 
 % for color of RGB measurements.
 colorCycle = [1 0 0; 0 0.6 0; 0 0 1];
@@ -53,8 +56,8 @@ plot(SToWls(cal.S_device), cal.P_device, 'LineWidth', 2.5);
 title('Primaries', 'Fontsize', 20, 'Fontname', 'helvetica');
 axis([380, 780, 0, Inf]);
 
-plots.nice_axes('wavelength (nm)', 'power', 20)
-plots.save_fig(fullfile(basedir, 'primaries.svg'), fig)
+plots.nice_axes('wavelength (nm)', 'power', 20, 0)
+plots.save_fig(fullfile(basedir, 'primaries'), fig, 1, 'pdf')
 
 % 2. CIE plot of gamut
 fig = figure(2);
@@ -80,8 +83,8 @@ axis square
 xlim([0, 0.9]);
 ylim([0, 0.9]);
 
-plots.nice_axes('CIE x', 'CIE y', 20)
-plots.save_fig(fullfile(basedir, 'CIExy_plot.svg'), fig)
+plots.nice_axes('CIE x', 'CIE y', 20, 0)
+plots.save_fig(fullfile(basedir, 'CIExy_plot'), fig, 1, 'pdf')
 
 % 3. Gamma functions
 fig = figure(3);
@@ -98,5 +101,5 @@ title('Gamma functions', 'Fontsize', 20, 'Fontname', 'helvetica');
 xlim([0 1.0]);
 ylim([0 1.0]);
 
-plots.nice_axes('input value', 'normalized output', 20);
-plots.save_fig(fullfile(basedir, 'gamma_functions.svg'), fig)
+plots.nice_axes('input value', 'normalized output', 20, 0);
+plots.save_fig(fullfile(basedir, 'gamma_functions'), fig, 1, 'pdf')
