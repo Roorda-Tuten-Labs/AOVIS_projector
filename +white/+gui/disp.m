@@ -1,15 +1,25 @@
-function params = disp()
+function params = disp(subject)
     import white.*
-
-    % display Brief description of GUI.
-    if exist('./param/default_params.mat', 'file') == 2
-        params = fil.load_params('default');
+    
+    if nargin > 0 &&  ~isempty(subject)
+        try
+            % if a subject ID is passed, try to load that subject's default
+            % paramters
+            params = fil.load_params(subject);
+        catch
+            % if they don't yet exist, start with defaults.
+            params = gen.default_params();
+        end
     else
-        params = gen.default_params();
+        % display Brief description of GUI.
+        if exist('./param/default_params.mat', 'file') == 2
+            params = fil.load_params('default');
+        else
+            params = gen.default_params();
+        end
     end
 
-    %  Construct the components
-    
+    %  Construct the components    
     % ---- Figure handle
     f = figure('Visible','on','Name','parameters',...
             'Position',[500, 500, 300, 385], 'Toolbar', 'none');
