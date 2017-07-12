@@ -21,6 +21,10 @@ import white.*
 params = gui.disp(); % only disp stimulus
 params.debug_mode = 1;
 
+% Handle keyboards properly
+KbName('UnifyKeyNames');
+keyboard_index = white.fil.find_keyboard_index();
+
 % display some instructions.
 disp('use: ar row keys to change size to match the AOSLO raster.');
 disp('use: a, w, s, z to move the cross hairs');
@@ -28,7 +32,7 @@ disp(' ');
 disp('press space bar when you are satisfied with the match')
 disp(' ');
 disp('press any key to begin...');
-KbWait(-1);
+KbWait(keyboard_index);
 
 try
     % ---- Set up window

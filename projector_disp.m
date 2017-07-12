@@ -1,7 +1,8 @@
-function params = disp(subject)
+function params = projector_disp(subject)
     import white.*
     
     if nargin > 0 &&  ~isempty(subject)
+        subject = fil.get_last_subject();
         try
             % if a subject ID is passed, try to load that subject's default
             % paramters
@@ -12,7 +13,9 @@ function params = disp(subject)
         end
     else
         % display Brief description of GUI.
-        if exist('./param/default_params.mat', 'file') == 2
+        white_dir = white.fil.get_path_to_white_dir();
+        if exist(fullfile(white_dir, 'param', 'default_params.mat'), ...
+                'file') == 2
             params = fil.load_params('default');
         else
             params = gen.default_params();
@@ -21,7 +24,7 @@ function params = disp(subject)
 
     %  Construct the components    
     % ---- Figure handle
-    f = figure('Visible','on','Name','parameters',...
+    f = figure('Visible','on','Name','Projector Control',...
             'Position',[500, 500, 300, 385], 'Toolbar', 'none');
     
     % ---- Panel
@@ -154,37 +157,72 @@ function params = disp(subject)
             'Position', [.05 .02 .9 .12], ...
             'Callback', @run_program);
 
-    uiwait(f);
+    %uiwait(f);
     
+    % ---- Handle close requests
+    set(f,'CloseRequestFcn',@close_gui);
     
-    function close_fig(~, ~)
-        close(f);
+    function close_gui(~, ~)
+        % terminate any remaining Psychtoolbox Windows.
+        try
+            white.stim.cleanup(params);
+            white.fil.save_last_subject(subject_id.String)
+            delete(f);
+        catch ME
+            delete(f);
+            rethrow(ME);
+        end
     end
 
     function run_program(~, ~)
         get_current_params();
-        project_main(subject_id); 
+        
+        try
+            % make sure no open windows, close if there are
+            if Screen('Screens') > 0
+                white.stim.cleanup();
+            end
+            
+            % ---- Set up window
+            window = white.stim.setup_window(params.screen, ...
+                params.textsize, 0, params.debug_mode);
+
+            % ---- Load calibration file:
+            cal = white.gen.cal_struct(params.cal_file, params.cal_dir);
+
+            % ---- Show stimulus
+            [~, params] = white.stim.control_image(params, cal, window, 0, 0);
+            
+        catch  %#ok<*CTCH>
+
+            white.stim.cleanup(params);
+
+            % We throw the error again so the user sees the error description.
+            psychrethrow(psychlasterror);
+
+        end
+        
     end
     
     function get_saved_params(~, ~)
         import white.*
         try
-        params = fil.load_params(get(subject_id, 'String'));
-        
-        set(x_coord, 'String', params.x);
-        set(y_coord, 'String', params.y);
-        set(LUM, 'String', params.LUM);
-        set(screen, 'String', params.screen);
-        set(fixation_size, 'String', params.fixation_size);
-        [~, name_, ext_] = fileparts(params.fundus_image_file);
-        
-        set(fundus_img_file,'String', [name_, ext_]);
-        set(cal_file,'String', params.cal_file);
+            params = fil.load_params(get(subject_id, 'String'));
+
+            set(x_coord, 'String', params.x);
+            set(y_coord, 'String', params.y);
+            set(LUM, 'String', params.LUM);
+            set(screen, 'String', params.screen);
+            set(fixation_size, 'String', params.fixation_size);
+            [~, name_, ext_] = fileparts(params.fundus_image_file);
+
+            set(fundus_img_file,'String', [name_, ext_]);
+            set(cal_file,'String', params.cal_file);
         
         catch
             set(subject_id, 'String', 'does not exist');
         end
-    end
+    end      
     
     
     function get_cal_file(~, ~)

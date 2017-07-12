@@ -23,6 +23,7 @@ end
 
 % ---- Make sure key names are the same across systems
 KbName('UnifyKeyNames');
+keyboard_index = white.fil.find_keyboard_index();
 
 if ~strcmp(params.fundus_image_file, '')
     fundus_image = imread(params.fundus_image_file);
@@ -49,7 +50,7 @@ try
     
     forward = 0;
     while ~forward
-        [~, keycode, ~] = KbWait(-1);
+        [~, keycode, ~] = KbWait(keyboard_index);
         if sum(keycode) == 1
             keyname = KbName(keycode);
             [forward, params] = process_keys(keyname, params);
@@ -274,13 +275,17 @@ end
         elseif strcmp(keyname, 'escape')
             xyz = 'end';
             forward = 1;
-            stim.cleanup(params); % always save params of 'real' rectangle
-            
+            % save params
+            fil.save_params(params, params.subject_id);
+            fil.save_params(params, 'default');
+            % close the screen if desired.
+            if close_at_end
+                stim.cleanup(params); % always save params of 'real' rectangle
+            end
         elseif strcmp(keyname, 'space') && disable_spacebar == 0
             forward = 1;
             
         elseif strcmp(keyname, '`')
-            % -- TODO: rather than print to command line, send to screen
             disp('saving active params');
             fil.save_params(params, params.subject_id);
             fil.save_params(params, 'default');
