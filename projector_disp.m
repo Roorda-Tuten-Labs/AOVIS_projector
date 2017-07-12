@@ -1,4 +1,4 @@
-function params = projector_disp(subject)
+function projector_disp(subject)
     import white.*
     
     if nargin > 0 &&  ~isempty(subject)
@@ -179,9 +179,7 @@ function params = projector_disp(subject)
         
         try
             % make sure no open windows, close if there are
-            if Screen('Screens') > 0
-                white.stim.cleanup();
-            end
+            white.stim.cleanup();
             
             % ---- Set up window
             window = white.stim.setup_window(params.screen, ...
@@ -192,6 +190,9 @@ function params = projector_disp(subject)
 
             % ---- Show stimulus
             [~, params] = white.stim.control_image(params, cal, window, 0, 0);
+            
+            % ---- Return focus to param window
+            figure(f);
             
         catch  %#ok<*CTCH>
 
