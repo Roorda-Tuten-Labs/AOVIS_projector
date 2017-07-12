@@ -22,15 +22,13 @@ else
 params = gen.image_sequence(cal, params);
 
 try 
-    % Retrieves the CLUT color code for background.
-    background = params.background;  
     
     % ---------- Run the experiment --------
     data_record = zeros(params.ntrials, 5);
     for trial=1:params.ntrials
         
         % 1. display image
-        stim.display_image(window, background, params, ...
+        stim.display_image(window, params, ...
             params.color_sequence(trial, 1:3), params.left, params.right);
         
         % 2. either present flash or constant stimulus
@@ -42,7 +40,7 @@ try
             end
             
             % 2b. show a background screen in between trials
-            stim.display_black_screen(window, background, params);
+            stim.display_black_screen(window, params.background, params);
             
             % 2c. keep background screen up for length of pause time
             pause(params.pause_time);
@@ -51,7 +49,7 @@ try
             pause(params.pause_time);
             
             % 2b. show a background screen in between trials
-            stim.display_black_screen(window, background, params);
+            stim.display_black_screen(window, params.background, params);
             
             % 2c. show background until user input received.
             data_record = exp.get_key_input(cal, data_record, params, trial);

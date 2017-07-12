@@ -1,6 +1,10 @@
-function display_image(window, cal, background, params, image_matrix)    
+function display_image(window, cal, params, image_matrix)    
+    % 
+    % USAGE
+    % display_image(window, cal, params, image_matrix) 
+    %
 
-    if nargin < 5 || isempty(image_matrix)
+    if nargin < 4 || isempty(image_matrix)
         % no image passed, so none to show. 
         params.add_image_flag = 0; 
         image_matrix = [];
@@ -9,7 +13,7 @@ function display_image(window, cal, background, params, image_matrix)
     
     % ---------- Image Display ---------- 
     % 1. Colors the entire window gray.
-    Screen('FillRect', window, background);
+    Screen('FillRect', window, params.background);
 
     % 2. Load image if desired
     if params.add_fundus_image_flag && ~isempty(image_matrix)

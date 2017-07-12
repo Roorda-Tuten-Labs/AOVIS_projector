@@ -43,11 +43,9 @@ params.match_LUM = params.LUM;
 
 big_steps = 1;
 try 
-    % Retrieves the CLUT color code for background.
-    background = params.background;
     
     % draw first image
-    draw_image(window, background, cal, params, fundus_image);
+    draw_image(window, cal, params, fundus_image);
     
     forward = 0;
     while ~forward
@@ -56,7 +54,7 @@ try
             keyname = KbName(keycode);
             [forward, params] = process_keys(keyname, params);
             if forward ~= 1
-                draw_image(window, background, cal, params, fundus_image);
+                draw_image(window, cal, params, fundus_image);
             end
         end
         
@@ -75,10 +73,10 @@ catch  %#ok<*CTCH>
 end
     
     % --- subroutines ---
-    function draw_image(window, background, cal, params, fundus_image)
+    function draw_image(window, cal, params, fundus_image)
         import white.*
       
-        stim.display_image(window, cal, background, params, fundus_image);
+        stim.display_image(window, cal, params, fundus_image);
         
          % prevent 'sticky keys'
         pause(0.15);

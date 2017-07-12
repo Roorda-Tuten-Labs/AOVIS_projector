@@ -7,7 +7,8 @@ function save_params(params, subject_id)
     filename = [subject_id '_params.mat'];   
     
     % save the param files in white/param directory
-    savename = fullfile('param', filename);
+    whitedir = white.fil.get_path_to_white_dir();
+    savename = fullfile(whitedir, 'param', filename);
     save(savename, 'params');
     
     % additionally save params in save_dir if that field is passed in
