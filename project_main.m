@@ -9,14 +9,13 @@ function project_main
     try
         % ---- Set up window
         [window, oldVisualDebugLevel, oldSupressAllWarnings] = stim.setup_window(...
-            params.screen, params.textsize, params.debug_mode);
+            params.screen, params.textsize, 0, params.debug_mode);
 
         % ---- Load calibration file:
         cal = gen.cal_struct(params.cal_file, params.cal_dir);
 
         % ---- Show stimulus
-        [~, params] = stim.control_image(params, cal, window, 1, ...
-            params.debug_mode);
+        [~, params] = stim.control_image(params, cal, window, 1, 0);
 
         stim.cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings);
     catch  %#ok<*CTCH>

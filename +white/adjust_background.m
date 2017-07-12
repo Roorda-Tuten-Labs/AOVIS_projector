@@ -29,6 +29,8 @@ if ~isempty(save_dir)
 end
 if debug_mode
     params.debug_mode = 1;
+else
+    params.debug_mode = 0;
 end
 
 if params.screen > 0
