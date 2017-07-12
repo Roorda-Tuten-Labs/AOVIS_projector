@@ -73,7 +73,7 @@ function [monitor, input_RGB] = collect_calibration(numMeasures)
             ind = randomindex(j);
             
             % display RGB values
-            Screen('FillRect',win, input_RGB(ind, :));
+            Screen('FillRect', win, input_RGB(ind, :));
             Screen('Flip', win);
 
             % take the measurement. put it into index corresponding to RGB.

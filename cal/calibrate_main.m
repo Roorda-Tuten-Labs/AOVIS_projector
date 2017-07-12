@@ -7,7 +7,7 @@ cal = [];
 % Script parameters
 cal.describe.whichScreen = 0; % Enter screen
 cal.describe.nAverage = 1; % currently only handles 1. should add this option in the future.
-cal.describe.nMeas = 65; % should be power of 2 + 1 (i.e. 9, 17, 33, 65)
+cal.describe.nMeas = 33; % should be power of 2 + 1 (i.e. 9, 17, 33, 65)
 cal.nDevices = 3; % LEDs
 cal.nPrimaryBases = 1; % No idea what this does
 cal.describe.S = [380 4 101]; % default for PR650
@@ -19,7 +19,7 @@ cal.describe.gamma.fitType = 'sigmoid';
 cal.describe.dacsize = ScreenDacBits(cal.describe.whichScreen);
 % This is used below when cubic interpolating the LUT. Must be based on the
 %  bit depth of the graphics card.
-nLevels = 2 ^ cal.describe.dacsize;
+nLevels = 2 ^ 8; % cal.describe.dacsize;
 
 % --- Fill in descriptive information --- %
 computerInfo = Screen('Computer');
@@ -35,9 +35,6 @@ else
 end
 cal.describe.driver = sprintf('%s %s','unknown_driver','unknown_driver_version');
 cal.describe.hz = hz;
-cal.describe.program = sprintf('calibration.m, background set to [%g,%g,%g]',...
-                               cal.bgColor(1), cal.bgColor(2), cal.bgColor(3));
-cal.describe.who = input('Enter your name: ','s');
 
 % Fitting parameters
 cal.describe.gamma.fitType = 'cubic interpolation';
@@ -47,6 +44,7 @@ cal.describe.gamma.fitType = 'cubic interpolation';
 cal.describe.monitor = input('Enter monitor name: ','s');
 cal.describe.date = sprintf('%s %s',date,datestr(now,14));
 cal.describe.comment = input('Describe the calibration: ','s');
+cal.describe.who = input('Enter your name: ','s');
 
 % name of the calibration that will be used for saving
 defaultFileName = 'monitor';
@@ -90,6 +88,8 @@ while 1
 		break;
 	end
 end
+cal.describe.program = sprintf('calibration.m, background set to [%g,%g,%g]',...
+                               cal.bgColor(1), cal.bgColor(2), cal.bgColor(3));
 
 % -------------------------------------- %
 % This is where the measurements happen.
@@ -116,7 +116,7 @@ corrected_data = EnforcePos(corrected_data);
 cal.rawdata.mon = corrected_data;
 
 cal.P_ambient = mean_ambient;
-cal.S_ambient = cal.S_device;
+cal.S_ambient = cal.describe.S; %cal.S_device;
 cal.T_ambient = eye(cal.describe.S(3));
 
 % Use data to compute best spectra according to desired
