@@ -1,15 +1,25 @@
-function params = disp()
+function params = disp(subject)
     import white.*
-
-    % display Brief description of GUI.
-    if exist('./param/default_params.mat', 'file') == 2
-        params = fil.load_params('default');
+    
+    if nargin > 0 &&  ~isempty(subject)
+        try
+            % if a subject ID is passed, try to load that subject's default
+            % paramters
+            params = fil.load_params(subject);
+        catch
+            % if they don't yet exist, start with defaults.
+            params = gen.default_params();
+        end
     else
-        params = gen.default_params();
+        % display Brief description of GUI.
+        if exist('./param/default_params.mat', 'file') == 2
+            params = fil.load_params('default');
+        else
+            params = gen.default_params();
+        end
     end
 
-    %  Construct the components
-    
+    %  Construct the components    
     % ---- Figure handle
     f = figure('Visible','on','Name','parameters',...
             'Position',[500, 500, 300, 385], 'Toolbar', 'none');
@@ -119,6 +129,8 @@ function params = disp()
     
     get_current_params();
     
+    close(f);
+    
     function get_saved_params(~, ~)
         import white.*
         try
@@ -139,16 +151,18 @@ function params = disp()
     
     
     function get_cal_file(~, ~)
+        whitedir = white.fil.get_path_to_white_dir();
         [fname, directory] = uigetfile({'*.mat'; }, ...
-            'Select the calibration file', './cal/files/');
+            'Select the calibration file', fullfile(whitedir, 'cal', 'files'));
         params.cal_file = fname;
         params.cal_dir = directory;
         set(cal_file,'String', params.cal_file);
     end
 
     function get_fundus_file(~, ~)
+        whitedir = white.fil.get_path_to_white_dir();
         [fname, directory] = uigetfile({'*'; }, ...
-            'Select the fundus image file', './img/');
+            'Select the fundus image file', fullfile(whitedir, 'img'));
         params.fundus_image_file = fullfile(directory, fname);
         set(fundus_img_file,'String', fname);
     end
@@ -173,10 +187,10 @@ function params = disp()
         
         % read pix per degree from txt file. This should only be edited
         % from calibrate_raster_pix_deg.
-        params.pix_per_deg = csvread('param/pix_per_deg.txt');
+        filedir = white.fil.get_path_to_white_dir();
+        fname = fullfile(filedir, 'param', 'pix_per_deg.txt');
+        params.pix_per_deg = csvread(fname);
         
     end
-
-    close all;
 
 end

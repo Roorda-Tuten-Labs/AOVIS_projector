@@ -10,7 +10,7 @@ function calibrate_raster_pix_deg(raster_size)
 %
 
 if nargin < 1
-    disp('Assuming a raster size of 1.2 degrees. Abort if not true');
+    warning('Assuming a raster size of 1.2 degrees. Abort if not true');
     raster_size = 1.2;
 end
 
@@ -19,13 +19,21 @@ import white.*
 
 % ---- Get parameters for experiment or display stimulus
 params = gui.disp(); % only disp stimulus
-params.debug_mode = 0;
+params.debug_mode = 1;
 
+% display some instructions.
+disp('use: ar row keys to change size to match the AOSLO raster.');
+disp('use: a, w, s, z to move the cross hairs');
+disp(' ');
+disp('press space bar when you are satisfied with the match')
+disp(' ');
+disp('press any key to begin...');
+KbWait(-1);
 
 try
     % ---- Set up window
-    [window, oldVisualDebugLevel, oldSupressAllWarnings] = stim.setup_window(...
-        params.screen, params.textsize, params.debug_mode);
+    window = stim.setup_window(params.screen, params.textsize, 0, ...
+        params.debug_mode);
 
     % Color the entire window gray.
     Screen('FillRect', window, params.background);
@@ -47,9 +55,9 @@ try
             stim.add_cross_hairs(window, [x_pixels, y_pixels], loc, ...
                 line_width_pix, 125);
 
-            Screen('Flip', window)
+            Screen('Flip', window);
         end
-        pause(0.15);
+        pause(0.2);
     end
     % compute size of raster in pixels by meaning x and y dimension.
     disp([x_pixels y_pixels]);
@@ -58,7 +66,7 @@ try
     disp(['pix/deg: ' num2str(params.pix_per_deg)]);
 
     % save new params
-    csvwrite('param/pix_per_deg.txt', 49.1);
+    csvwrite('param/pix_per_deg.txt', params.pix_per_deg);
     
     % cleanup
     stim.cleanup();
@@ -76,32 +84,36 @@ end
     function [forward, active_params] = process_keys(keyname, active_params)
         import white.*
         
+        if iscell(keyname)
+            % two keys were hit at the same time
+            keyname = keyname{1}; % just take the first one.
+        end
         size_step = 1;
         forward = 0;
         
-        if strcmp(keyname, 'left') || strcmp(keyname, 'LeftArrow') 
+        if strcmpi(keyname, 'left') || strcmpi(keyname, 'LeftArrow') 
             active_params.img_x = active_params.img_x - size_step;
-        elseif strcmp(keyname, 'RightArrow')|| strcmp(keyname, 'right')
+        elseif strcmpi(keyname, 'RightArrow')|| strcmpi(keyname, 'right')
             active_params.img_x = active_params.img_x + size_step;
-        elseif strcmp(keyname, 'UpArrow')|| strcmp(keyname, 'up')
+        elseif strcmpi(keyname, 'UpArrow')|| strcmpi(keyname, 'up')
             active_params.img_y = active_params.img_y + size_step;
-        elseif strcmp(keyname, 'DownArrow')|| strcmp(keyname, 'down')
+        elseif strcmpi(keyname, 'DownArrow')|| strcmpi(keyname, 'down')
             active_params.img_y = active_params.img_y - size_step;            
 
-        elseif strcmp(keyname, 'w')|| strcmp(keyname, 'W')
+        elseif strcmpi(keyname, 'w')
             active_params.img_offset_y = active_params.img_offset_y  - size_step;
-        elseif strcmp(keyname, 'z')|| strcmp(keyname, 'Z')
+        elseif strcmpi(keyname, 'z')
             active_params.img_offset_y = active_params.img_offset_y  + size_step;
-        elseif strcmp(keyname, 'a')|| strcmp(keyname, 'A')
+        elseif strcmpi(keyname, 'a')
             active_params.img_offset_x = active_params.img_offset_x  - size_step;
-        elseif strcmp(keyname, 's')|| strcmp(keyname, 'S')
+        elseif strcmpi(keyname, 's')
             active_params.img_offset_x = active_params.img_offset_x  + size_step;
 
-        elseif strcmp(keyname, 'ESCAPE')|| strcmp(keyname, 'escape')
+        elseif strcmpi(keyname, 'escape')
             forward = 1;
             stim.cleanup();
             
-        elseif strcmp(keyname, 'space')
+        elseif strcmpi(keyname, 'space')
             forward = 1;
         end
 

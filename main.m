@@ -1,28 +1,22 @@
 clearvars; close all;
 
-%debug_mode = 0;
-
 % ---- Import local files
 import white.*
 
-% ---- Add external dependencies to path
-fil.add_depend();
-
 % ---- Get parameters for experiment or display stimulus
 params = gui.disp(); % only disp stimulus
-params.debug_mode = 0;
+params.debug_mode = 1;
 
 try
     % ---- Set up window
     [window, oldVisualDebugLevel, oldSupressAllWarnings] = stim.setup_window(...
-        params.screen, params.textsize, params.debug_mode);
+        params.screen, params.textsize, 1, params.debug_mode);
 
     % ---- Load calibration file:
     cal = gen.cal_struct(params.cal_file, params.cal_dir);
 
     % ---- Show stimulus
-    [xyz, params] = stim.control_image([params.x params.y params.LUM], ...
-            params, cal, window, 1, 1);
+    [xyz, params] = stim.control_image(params, cal, window, 1, 1);
         
     stim.cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings);
 catch  %#ok<*CTCH>
