@@ -1,37 +1,29 @@
-function [xyz, params] = control_image(xyY, params, cal, window, ...
+function [xyz, params] = control_image(params, cal, window, ...
     close_at_end, disable_spacebar)
 
 import white.*
 
-if nargin < 2
+if nargin < 1
     params = gen.default_params();
 end
-if nargin < 4
-    window = stim.setup_window(params.screen, params.textsize, ...
+if nargin < 3
+    window = stim.setup_window(params.screen, params.textsize, 1, ...
         params.debug_mode);
 end
-if nargin < 3
+if nargin < 2
     cal = gen.cal_struct(params.cal_file, params.cal_dir);
 end
-if nargin < 5 && nargin > 1
+if nargin < 4
     close_at_end = 0;
 end
-if nargin < 6
+if nargin < 5
     disable_spacebar = 0;
 end
-if nargin < 1
-    xyY = input('xyY coordinate to display [default = 1/3 1/3 40]');
-    if isempty(xyY)
-        xyY = [1/3 1/3 40];
-    end
-    params.x = xyY(1);
-    params.y = xyY(2);
-    params.LUM = xyY(3);
-    close_at_end = 1;
-end
+
 
 % ---- Make sure key names are the same across systems
 KbName('UnifyKeyNames');
+keyboard_index = white.fil.find_keyboard_index();
 
 if ~strcmp(params.fundus_image_file, '')
     fundus_image = imread(params.fundus_image_file);
@@ -52,20 +44,18 @@ params.match_LUM = params.LUM;
 
 big_steps = 1;
 try 
-    % Retrieves the CLUT color code for background.
-    background = params.background;
     
     % draw first image
-    draw_image(window, background, cal, params, fundus_image);
+    draw_image(window, cal, params, fundus_image);
     
     forward = 0;
     while ~forward
-        [~, keycode, ~] = KbWait(-1);
+        [~, keycode, ~] = KbWait(keyboard_index);
         if sum(keycode) == 1
             keyname = KbName(keycode);
             [forward, params] = process_keys(keyname, params);
             if forward ~= 1
-                draw_image(window, background, cal, params, fundus_image);
+                draw_image(window, cal, params, fundus_image);
             end
         end
         
@@ -84,10 +74,10 @@ catch  %#ok<*CTCH>
 end
     
     % --- subroutines ---
-    function draw_image(window, background, cal, params, fundus_image)
+    function draw_image(window, cal, params, fundus_image)
         import white.*
       
-        stim.display_image(window, cal, background, params, fundus_image);
+        stim.display_image(window, cal, params, fundus_image);
         
          % prevent 'sticky keys'
         pause(0.15);
@@ -285,13 +275,17 @@ end
         elseif strcmp(keyname, 'escape')
             xyz = 'end';
             forward = 1;
-            stim.cleanup(params); % always save params of 'real' rectangle
-            
+            % save params
+            fil.save_params(params, params.subject_id);
+            fil.save_params(params, 'default');
+            % close the screen if desired.
+            if close_at_end
+                stim.cleanup(params); % always save params of 'real' rectangle
+            end
         elseif strcmp(keyname, 'space') && disable_spacebar == 0
             forward = 1;
             
         elseif strcmp(keyname, '`')
-            % -- TODO: rather than print to command line, send to screen
             disp('saving active params');
             fil.save_params(params, params.subject_id);
             fil.save_params(params, 'default');

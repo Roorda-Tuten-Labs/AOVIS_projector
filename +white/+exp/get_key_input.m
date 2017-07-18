@@ -2,9 +2,13 @@ function [data_record] = get_key_input(cal, data_record, params, trial)
 
     import white.*
 
+    % Handle keyboards properly
+    KbName('UnifyKeyNames');
+    keyboard_index = white.fil.find_keyboard_index();
+
     keyisdown = 0;
     while ~keyisdown
-        [~, keycode, ~] = KbWait();
+        [~, keycode, ~] = KbWait(keyboard_index);
         keyname = KbName(keycode);
 
         if strcmp(keyname, 'left') || strcmp(keyname, 'right') ...

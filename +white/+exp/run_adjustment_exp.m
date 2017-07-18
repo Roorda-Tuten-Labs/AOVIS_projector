@@ -11,8 +11,7 @@ function [params, xyz] = run_adjustment_exp(window, params, cal)
             [a, b] = convert.CIE_from_Angle(angle, params.RHO, ...
                 params.color_space);
             data_record(i, 4:5) = [a, b]; % record starting position
-            [xyz, params] = stim.control_image([a b params.LUM], params, cal, ...
-                window, 0);
+            [xyz, params] = stim.control_image(params, cal, window, 0);
             
             if strcmp(xyz, 'end')
                 return;
@@ -30,10 +29,8 @@ function [params, xyz] = run_adjustment_exp(window, params, cal)
         % ---- show final gray point ----
         disp('SEM:'); disp(std(data_record(:, 1:3), 1) / ...
             sqrt(params.nrepeats));
-        xyz = mean(data_record(:, 1:3), 1)';
-        xyY = XYZToxyY(xyz);
-        uv = xyTouv([xyY(1) xyY(2)]');
-        stim.control_image([uv(1) uv(2) params.LUM], params, cal, window, 0);
+
+        stim.control_image(params, cal, window, 0);
         KbWait();
         
         % ---- cleanup ----

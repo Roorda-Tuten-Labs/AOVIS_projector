@@ -10,7 +10,7 @@ fil.check_for_data_dir(params.subject);
     
 % ---- Set up window
 [window, oldVisualDebugLevel, oldSupressAllWarnings] = stim.setup_window(...
-    params.screen, params.textsize, params.debug_mode);
+    params.screen, params.textsize, 1, params.debug_mode);
 
 % ---- Load calibration file:
 cal = gen.cal_struct(params.cal_file, params.cal_dir);
@@ -30,7 +30,7 @@ if strcmp(params.psych_method, 'forced choice')
         [params, xyz] = exp.run_forced_choice_exp(window, params, cal, 'white');
 
         % ---- Show final stimulus
-        stim.control_image([xyz(1) xyz(2) params.LUM]', params, window, 0, cal);
+        stim.control_image(params, window, 0, cal);
 
         stim.cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings);
 
