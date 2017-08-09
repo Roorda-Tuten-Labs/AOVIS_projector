@@ -31,8 +31,8 @@ function [window, oldVisualDebugLevel, oldSupressAllWarnings] = ...
                             640, 480]);
     else
         window = Screen('OpenWindow', whichScreen);
-    end
-
+    end    
+    
     Screen('TextSize', window, textSize);
     
     LoadIdentityClut(window);
