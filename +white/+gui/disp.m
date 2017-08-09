@@ -156,32 +156,29 @@ function params = disp(subject)
 
     uiwait(f);
     
-    
-    function close_fig(~, ~)
-        close(f);
-    end
 
     function run_program(~, ~)
         get_current_params();
-        project_main(subject_id); 
+        uiresume(f); 
+        close(f);        
     end
     
     function get_saved_params(~, ~)
         import white.*
         try
-        params = fil.load_params(get(subject_id, 'String'));
-        
-        set(x_coord, 'String', params.x);
-        set(y_coord, 'String', params.y);
-        set(LUM, 'String', params.LUM);
-        set(screen, 'String', params.screen);
-        set(fixation_size, 'String', params.fixation_size);
-        [~, name_, ext_] = fileparts(params.fundus_image_file);
-        
-        set(fundus_img_file,'String', [name_, ext_]);
-        set(cal_file,'String', params.cal_file);
-        
-        catch
+            params = fil.load_params(get(subject_id, 'String'));
+
+            set(x_coord, 'String', params.x);
+            set(y_coord, 'String', params.y);
+            set(LUM, 'String', params.LUM);
+            set(screen, 'String', params.screen);
+            set(fixation_size, 'String', params.fixation_size);
+            [~, name_, ext_] = fileparts(params.fundus_image_file);
+
+            set(fundus_img_file,'String', [name_, ext_]);
+            set(cal_file,'String', params.cal_file);
+
+        catch ME
             set(subject_id, 'String', 'does not exist');
         end
     end
