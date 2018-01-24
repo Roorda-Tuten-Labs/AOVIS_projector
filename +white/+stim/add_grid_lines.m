@@ -9,7 +9,7 @@ function add_grid_lines(window, params, rect)
     % Get the size of the on screen window
     [screenXpixels, screenYpixels] = Screen('WindowSize', window);
     
-    line_width_pix = 1;
+    line_width_pix = 3;
     for deg = -20:1:20
         pix_loc = deg * params.pix_per_deg;
         xcoords = [-screenXpixels, screenXpixels pix_loc pix_loc];

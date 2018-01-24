@@ -10,8 +10,8 @@ function calibrate_raster_pix_deg(raster_size)
 %
 
 if nargin < 1
-    warning('Assuming a raster size of 1.2 degrees. Abort if not true');
-    raster_size = 1.2;
+    warning('Assuming a raster size of 0.95 degrees. Abort if not true');
+    raster_size = 0.95;
 end
 
 % ---- Import local files

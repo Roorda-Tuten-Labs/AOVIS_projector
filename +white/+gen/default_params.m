@@ -30,7 +30,7 @@ params.constant_stim = 1;
 params.cal_file = 'RoordaLabMarch12_2014b.mat';
 params.cal_dir = fullfile(white.fil.get_path_to_white_dir,'cal', 'files');
 params.pause_time = 1.0; % in sec
-params.screen = 0; % which screen to display.
+params.screen_ID = 0; % which screen to display.
 params.textsize = 20; % size of text on screen.
 
 % ---------- Color Setup ----------

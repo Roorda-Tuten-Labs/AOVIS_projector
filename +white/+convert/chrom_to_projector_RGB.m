@@ -28,7 +28,11 @@ function color = chrom_to_projector_RGB(cal, chromaticity, color_space)
         fprintf('rgb = %f\n', RGB);
     end
 
-    color = RGB * 255;
-        
+    bits_sharp = 1;
+    if bits_sharp
+        color = RGB;
+    else
+        color = RGB * 255;
+    end
 end
 

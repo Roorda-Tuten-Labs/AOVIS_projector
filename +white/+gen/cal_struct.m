@@ -13,7 +13,7 @@ function cal = cal_struct(cal_file, cal_dir)
         %end
 
     catch
-        stim.cleanup();
+        white.stim.cleanup();
         error('Cal file not found.')
     end
     

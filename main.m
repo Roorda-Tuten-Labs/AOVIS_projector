@@ -4,12 +4,13 @@ function main
     import white.*
 
     % ---- Get parameters for experiment or display stimulus
-    params = gui.disp(); % only disp stimulus
-    
+    params = gui.disp(); % only disp stimulus    
+    params.bits_sharp = 1;
+
     try
         % ---- Set up window
         [window, oldVisualDebugLevel, oldSupressAllWarnings] = stim.setup_window(...
-            params.screen, params.textsize, 1, params.debug_mode);
+            params.screen, params.textsize, 1, params.debug_mode, params.bits_sharp);
 
         % ---- Load calibration file:
         cal = gen.cal_struct(params.cal_file, params.cal_dir);
