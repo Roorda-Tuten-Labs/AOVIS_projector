@@ -1,24 +1,19 @@
 function params = disp(subject)
     import white.*
     
-    if nargin > 0 &&  ~isempty(subject)
-        try
-            % if a subject ID is passed, try to load that subject's default
-            % paramters
-            params = fil.load_params(subject);
-        catch
-            % if they don't yet exist, start with defaults.
-            params = gen.default_params();
-        end
+    % display Brief description of GUI.
+    if exist('./param/default_params.mat', 'file') == 2
+        params = fil.load_params('./param/default_params.mat');
     else
-        % display Brief description of GUI.
-        if exist('./param/default_params.mat', 'file') == 2
-            params = fil.load_params('default');
-        else
-            params = gen.default_params();
-        end
+        params = gen.default_params();
     end
-
+    if ~isfield(params, 'bits_sharp')
+        params.bits_sharp = 0;
+    end
+    if ~isfield(params, 'hide_cursor')
+        params.hide_cursor = 1;
+    end
+    
     %  Construct the components    
     % ---- Figure handle
     f = figure('Visible','on','Name','parameters',...
@@ -47,32 +42,32 @@ function params = disp(subject)
     uicontrol(ph,'Style','text',...
                 'String','CIE x',...
                 'Units','normalized',...
-                'Position',[.05 .65 .4 .08]);
+                'Position',[.05 .68 .4 .08]);
             
     x_coord = uicontrol(ph,'Style','edit',...
             'Units','normalized',...
             'String', num2str(params.x),...
-            'Position', [.05 .6 .4 .08]);
+            'Position', [.05 .63 .4 .08]);
 
     uicontrol(ph,'Style','text',...
                 'String','CIE y',...
                 'Units','normalized',...
-                'Position', [.05 .5 .4 .08]);
+                'Position', [.05 .53 .4 .08]);
             
     y_coord = uicontrol(ph,'Style','edit',...
             'Units','normalized',...
             'String', num2str(params.y),...
-            'Position', [.05 .45 .4 .08]); 
+            'Position', [.05 .48 .4 .08]); 
         
     uicontrol(ph,'Style','text',...
                 'String','luminance (Y)',...
                 'Units','normalized',...
-                'Position',[.05 .35 .4 .08]);
+                'Position',[.05 .38 .4 .08]);
             
     LUM = uicontrol(ph,'Style','edit',...
             'Units','normalized',...
             'String', num2str(params.LUM),...
-            'Position', [.05 .3 .4 .08]); 
+            'Position', [.05 .33 .4 .08]); 
         
     uicontrol(ph,'Style','text',...
                 'String','calibration file',...
@@ -147,6 +142,35 @@ function params = disp(subject)
         set(debug_mode,'SelectedObject', b2);  % Set the object
     end
     
+    % --- radio button
+    uicontrol(ph,'Style','text',...
+                'String','bits #',...
+                'Units','normalized',...
+                'Position',[.01 0.2 .2 .08]);            
+
+    bits_sharp = uibuttongroup(ph, 'Units','Normalized', ...
+        'Position', [.2 0.17 .25 0.15]);
+    
+    c1 = uicontrol('Style','Radio', 'Parent', bits_sharp, ...
+        'HandleVisibility','off', ...
+        'Units','Normalized', ...
+        'Position', [.2 .6 .8 .35], ...
+        'String','false', 'Tag', '0');
+    
+    c2 = uicontrol('Style','Radio', 'Parent', bits_sharp, ...
+        'HandleVisibility','off', ...
+        'Units','Normalized', ...
+        'Position',  [.2 .1 .8 .35], ...
+        'String','true', 'Tag', '1');
+    
+    % set the default selected button.
+    if params.bits_sharp == 0
+        set(bits_sharp,'SelectedObject', c1);  % Set the object
+    else
+        set(bits_sharp,'SelectedObject', c2);  % Set the object
+    end
+    
+    
     % ---- Buttons
 
     uicontrol(ph,'Style','pushbutton','String','start',...
@@ -166,17 +190,27 @@ function params = disp(subject)
     function get_saved_params(~, ~)
         import white.*
         try
-            params = fil.load_params(get(subject_id, 'String'));
+            
+            util.check_for_dir('param');
+            
+            whitedir = white.fil.get_path_to_white_dir();
+            [fname, directory] = uigetfile({'*.mat'; }, ...
+                'Select the calibration file', fullfile(whitedir, 'param'));
+        
+            params = fil.load_params(fullfile(directory, fname));
 
             set(x_coord, 'String', params.x);
             set(y_coord, 'String', params.y);
             set(LUM, 'String', params.LUM);
-            set(screen, 'String', params.screen);
+            set(screen_ID, 'String', params.screen);
             set(fixation_size, 'String', params.fixation_size);
             [~, name_, ext_] = fileparts(params.fundus_image_file);
 
             set(fundus_img_file,'String', [name_, ext_]);
             set(cal_file,'String', params.cal_file);
+            % cal files should always be in the same relative dir.
+            params.cal_dir = fullfile(white.fil.get_path_to_white_dir(), ...
+                'cal', 'files');
 
         catch ME
             set(subject_id, 'String', 'does not exist');

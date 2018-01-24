@@ -1,9 +1,7 @@
-function params = load_params(subject_id)
+function params = load_params(pathname)
     % 
-    % params = load_params(subject_id)
+    % params = load_params(pathname)
     
-    whitedir = white.fil.get_path_to_white_dir();    
-    n = fullfile(whitedir, 'param', [subject_id '_params.mat']);    
-    params = load(n);
+    params = load(pathname);
     params = params.params;
 end

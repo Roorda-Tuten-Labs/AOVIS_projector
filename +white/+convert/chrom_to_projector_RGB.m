@@ -18,6 +18,9 @@ function color = chrom_to_projector_RGB(cal, chromaticity, color_space)
         xyY = [a b LUM]'; 
     end
     
+    % display current xyY
+    disp(xyY);
+    
     XYZ = xyYToXYZ(xyY);
     [RGB, outOfRangePixels] = SensorToSettings(cal, XYZ);
     
@@ -28,10 +31,11 @@ function color = chrom_to_projector_RGB(cal, chromaticity, color_space)
         fprintf('rgb = %f\n', RGB);
     end
 
-    bits_sharp = 1;
-    if bits_sharp
+    if cal.bits_sharp
+        % values should be between 0-1.
         color = RGB;
     else
+        % otherwise we scale values into 0-255 (8-bit).
         color = RGB * 255;
     end
 end

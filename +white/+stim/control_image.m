@@ -11,7 +11,7 @@ if nargin < 3
         params.debug_mode);
 end
 if nargin < 2
-    cal = gen.cal_struct(params.cal_file, params.cal_dir);
+    cal = gen.cal_struct(params.cal_file, params.cal_dir, params.bits_sharp);
 end
 if nargin < 4
     close_at_end = 0;
@@ -26,7 +26,12 @@ KbName('UnifyKeyNames');
 keyboard_index = white.fil.find_keyboard_index();
 
 if ~strcmp(params.fundus_image_file, '')
-    fundus_image = imread(params.fundus_image_file);
+    % get correct file name and directory.
+    [~, fname, ext] = fileparts(params.fundus_image_file);
+    directory = white.fil.get_path_to_white_dir();
+    full_fname = fullfile(directory, 'img', [fname ext]);
+    % now read
+    fundus_image = imread(full_fname);    
     fundus_image = fundus_image(:, :, 1);
 else
     fundus_image = []; %empty matrix

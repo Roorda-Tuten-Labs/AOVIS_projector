@@ -36,8 +36,7 @@ KbWait(keyboard_index);
 
 try
     % ---- Set up window
-    window = stim.setup_window(params.screen, params.textsize, 0, ...
-        params.debug_mode);
+    window = stim.setup_window(params);
 
     % Color the entire window gray.
     Screen('FillRect', window, params.background);

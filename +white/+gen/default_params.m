@@ -19,6 +19,8 @@ else
     params.color_space = color_space;
 end
 
+params.hide_cursor = 1;
+params.bits_sharp = 0;
 params.subject_id = 'default';
 params.debug_mode = 0;
 
