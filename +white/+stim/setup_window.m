@@ -29,13 +29,16 @@ function [window, oldVisualDebugLevel, oldSupressAllWarnings] = ...
         ShowCursor;
     else        
         if params.bits_sharp
-            window = PsychImaging('OpenWindow', params.screen, 0.5);
+            window = PsychImaging('OpenWindow', params.screen, 0.1);
         else
             window = Screen('OpenWindow', params.screen);
         end
     end    
-    
-    Screen('TextSize', window, params.textsize);
+    if params.bits_sharp
+        Screen('TextSize', window, params.textsize / 2);
+    else
+        Screen('TextSize', window, params.textsize);
+    end
     
     LoadIdentityClut(window);
 end

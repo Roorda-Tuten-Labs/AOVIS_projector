@@ -14,12 +14,8 @@ if nargin < 1
     raster_size = 0.95;
 end
 
-% ---- Import local files
-import white.*
-
 % ---- Get parameters for experiment or display stimulus
-params = gui.disp(); % only disp stimulus
-params.debug_mode = 1;
+params = white.gui.disp(); % only disp stimulus
 
 % Handle keyboards properly
 KbName('UnifyKeyNames');
@@ -34,14 +30,22 @@ disp(' ');
 disp('press any key to begin...');
 KbWait(keyboard_index);
 
+if params.bits_sharp
+    bkgd = 0.1;
+    whiteRGB = 0.6;
+else
+    bkgd = params.background;
+    whiteRGB = 125;
+end
+
 try
     % ---- Set up window
-    window = stim.setup_window(params);
+    window = white.stim.setup_window(params);
 
     % Color the entire window gray.
-    Screen('FillRect', window, params.background);
+    Screen('FillRect', window, bkgd);
     
-    line_width_pix = 4;
+    line_width_pix = 3;
 
     forward = 0;
     while ~forward
@@ -55,8 +59,8 @@ try
             loc = [params.img_offset_x, params.img_offset_y];
             
             % Draw cross-hairs
-            stim.add_cross_hairs(window, [x_pixels, y_pixels], loc, ...
-                line_width_pix, 125);
+            white.stim.add_cross_hairs(window, [x_pixels, y_pixels], loc, ...
+                line_width_pix, whiteRGB);
 
             Screen('Flip', window);
         end
@@ -64,6 +68,10 @@ try
     end
     % compute size of raster in pixels by meaning x and y dimension.
     disp([x_pixels y_pixels]);
+    if params.bits_sharp
+        % in colorPlusPlus mode, horizontal resolution is halved.
+        x_pixels = x_pixels * 2; 
+    end
     pixels = mean([x_pixels y_pixels]);
     params.pix_per_deg = pixels / raster_size;
     disp(['pix/deg: ' num2str(params.pix_per_deg)]);
@@ -72,11 +80,11 @@ try
     csvwrite('param/pix_per_deg.txt', params.pix_per_deg);
     
     % cleanup
-    stim.cleanup();
+    white.stim.cleanup();
     
 catch  %#ok<*CTCH>
    
-	stim.cleanup();
+	white.stim.cleanup();
 
 	% We throw the error again so the user sees the error description.
 	psychrethrow(psychlasterror);
