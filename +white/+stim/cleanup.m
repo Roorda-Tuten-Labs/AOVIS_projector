@@ -11,7 +11,7 @@ function cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings)
         fil.save_params(params, params.subject_id);
         fil.save_params(params, 'default');
     end
-    
+        
     % Closes all windows.
     Screen('CloseAll');
     
@@ -24,4 +24,8 @@ function cleanup(params, oldVisualDebugLevel, oldSupressAllWarnings)
     % Restore preferences
     Screen('Preference', 'VisualDebugLevel', oldVisualDebugLevel);
     Screen('Preference', 'SuppressAllWarnings', oldSupressAllWarnings);
+    
+    % For PsychImaging 
+    clear all;
+    
 end

@@ -5,21 +5,21 @@ close all;
 cal = [];
 
 % Script parameters
-cal.describe.whichScreen = 0; % Enter screen
+cal.describe.whichScreen = 2; % Enter screen
 cal.describe.nAverage = 1; % currently only handles 1. should add this option in the future.
-cal.describe.nMeas = 33; % should be power of 2 + 1 (i.e. 9, 17, 33, 65)
+cal.describe.nMeas = 65; % should be power of 2 + 1 (i.e. 9, 17, 33, 65)
 cal.nDevices = 3; % LEDs
 cal.nPrimaryBases = 1; % No idea what this does
 cal.describe.S = [380 4 101]; % default for PR650
 cal.manual.use = 0; % use automated routine
 cal.manual.photometer = 0;
-cal.describe.gamma.fitType = 'sigmoid';
+cal.describe.gamma.fitType = 'interp';
 
 % Find out about screen
 cal.describe.dacsize = ScreenDacBits(cal.describe.whichScreen);
 % This is used below when cubic interpolating the LUT. Must be based on the
 %  bit depth of the graphics card.
-nLevels = 2 ^ 8; % cal.describe.dacsize;
+nLevels = 2 ^ 14; % cal.describe.dacsize;
 
 % --- Fill in descriptive information --- %
 computerInfo = Screen('Computer');
@@ -92,6 +92,15 @@ cal.describe.program = sprintf('calibration.m, background set to [%g,%g,%g]',...
                                cal.bgColor(1), cal.bgColor(2), cal.bgColor(3));
 
 % -------------------------------------- %
+
+% wait for user input
+disp('');
+fprintf([ ...
+       'When ready press any button to start. You will have. \n' ...
+       '10 sec to leave the room if desired']);
+input('');
+pause(10.0);
+
 % This is where the measurements happen.
 [cal_data, input_RGB] = collect_calibration(cal.describe.nMeas);
 
@@ -126,12 +135,13 @@ disp('Computing linear models');
 cal = CalibrateFitLinMod(cal);
 
 % ------- Fit gamma functions. -------- %
+cal.describe.gamma.fitType = 'interp';
 if strcmp(cal.describe.gamma.fitType, 'interp')
     % Define input settings for the measurements
-    mGammaInputRaw = linspace(0, 1, cal.describe.nMeas+1)';
-    mGammaInputRaw = mGammaInputRaw(2:end);
+    mGammaInputRaw = linspace(0, 1, cal.describe.nMeas)';
+    %mGammaInputRaw = mGammaInputRaw(2:end);
 
-    %cal.rawdata.rawGammaInput = mGammaInputRaw;
+    cal.rawdata.rawGammaInput = mGammaInputRaw;
 
     mGammaMassaged = cal.rawdata.rawGammaTable(:,1:cal.nDevices);
     for i = 1:cal.nDevices
@@ -144,11 +154,11 @@ if strcmp(cal.describe.gamma.fitType, 'interp')
     %Gamma function fittings
     gammaInputFit = linspace(0, 1, nLevels)';
     % append 0 at beginning so cubic fitting goes to 0
-    r_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 1)'], ...
+    r_table = interp1([mGammaInputRaw']', [mGammaMassaged(:, 1)'], ...
         gammaInputFit, 'pchip');
-    g_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 2)']', ...
+    g_table = interp1([mGammaInputRaw']', [mGammaMassaged(:, 2)']', ...
         gammaInputFit, 'pchip');
-    b_table = interp1([0 mGammaInputRaw']', [0 mGammaMassaged(:, 3)']', ...
+    b_table = interp1([mGammaInputRaw']', [mGammaMassaged(:, 3)']', ...
         gammaInputFit, 'pchip');
 
     cal.gammaInput = gammaInputFit;

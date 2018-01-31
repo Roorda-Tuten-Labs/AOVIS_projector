@@ -1,5 +1,7 @@
 function [monitor, input_RGB] = collect_calibration(numMeasures)
     % Collect calibration data.
+    % To specify COM port, save a file called CMPreferredPort.txt with
+    % portstring.
     %
     % USAGE
     % monitor, input_RGB] = collect_calibration(numMeasures)
@@ -8,21 +10,22 @@ function [monitor, input_RGB] = collect_calibration(numMeasures)
     if nargin < 1   
         numMeasures = 17; % should be 1 + power of 2 (9, 17, 33, ...)
     end
+    bits_sharp = 1;
 
     % default value for PR650
     S = [380 4 101];
 
     % ------- Calibrate monitor -------------
-    CMCheckInit(1);
+    units = 1;
+    repeats = 1;
+    USBcomPORT = 'COM4';
+    [port, status] = PR650_Init(units, repeats, USBcomPORT);
+    disp(status);
+    
 
     % Supress checking behavior
     % oldVisualDebugLevel = Screen('Preference', 'VisualDebugLevel', 3);
-    % oldSupressAllWarnings = Screen('Preference', 'SuppressAllWarnings', 1);
-
-    
-    input(sprintf(['When white screen appears, setup photometer, \n' ...
-           'When ready press any button to start. You will have. \n' ...
-           '10 sec to leave the room if desired'], numMeasures*3));
+    % oldSupressAllWarnings = Screen('Preference', 'SuppressAllWarnings', 1)
 
     psychlasterror('reset');
 
@@ -33,28 +36,43 @@ function [monitor, input_RGB] = collect_calibration(numMeasures)
     monitor = zeros(S(3), numMeasures * 3);    
     try
         % Find out how many screens and use largest screen number.
-        whichScreen = max(Screen('Screens'));
+        if ~bits_sharp
+            whichScreen = max(Screen('Screens'));
+        else
+            whichScreen = 2;
+        end
+        
         % Hides the mouse cursor
-        HideCursor;
-
-        % Open black window:
-        win = Screen('OpenWindow', whichScreen, 0);
+        %HideCursor;
+       
+        if ~bits_sharp
+            % Open black window:
+            win = Screen('OpenWindow', whichScreen, 0);
+            Screen('FillRect', win, [255 255 255]);        
+            
+        else            
+            % bits# specific
+            mode = 0;
+            PsychImaging('PrepareConfiguration');
+            PsychImaging('AddTask', 'General', 'FloatPoint32Bit');
+            PsychImaging('AddTask', 'General', 'EnableBits++Color++Output', mode);
+            win = PsychImaging('OpenWindow', whichScreen);
+            Screen('FillRect', win, 1);
+        end 
 
         % display white screen for user to setup photometer.
-        Screen('FillRect', win, [255 255 255]);
+        
         Screen('Flip', win);        
-        
-        % wait for user input
-        input('');
-        
-        % wait for user to leave room
-        pause(10.0);
         
         % set up voltages.
         maxLevel = Screen('ColorRange', win);
 
-        inputV = [0:(maxLevel + 1) / (numMeasures - 1):(maxLevel+1)]; %#ok<NBRAK>
-        inputV(end) = maxLevel;
+        if ~bits_sharp
+            inputV = [0:(maxLevel + 1) / (numMeasures - 1):(maxLevel+1)]; %#ok<NBRAK>
+            inputV(end) = maxLevel;
+        else
+            inputV = linspace(0, 1, numMeasures);
+        end
 
         % set up RGB values to measure.
         input_RGB = zeros(length(inputV) * 3, 3);
@@ -77,7 +95,9 @@ function [monitor, input_RGB] = collect_calibration(numMeasures)
             Screen('Flip', win);
 
             % take the measurement. put it into index corresponding to RGB.
-            monitor(:, ind) = MeasSpd(S, 1, 'off');
+            %monitor(:, ind) = MeasSpd(S, 1, 'off');
+            data = PR650_MeasureAll(port, repeats);
+            monitor(:, ind) = data.spectral_data;
 
         end
 

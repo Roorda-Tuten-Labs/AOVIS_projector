@@ -63,6 +63,7 @@ plots.save_fig(fullfile(basedir, 'primaries'), fig, 1, 'pdf')
 fig = figure(2);
 
 T_xyz1931 = csvread('data/ciexyz31.csv')';
+T_xyz1931 = T_xyz1931(2:4, :);
 S_xyz1931 = [380, 5, 81];
 
 CMFs = SplineCmf(S_xyz1931, T_xyz1931, cal.S_device);
@@ -73,7 +74,8 @@ gun_xyz  = diag(1 ./ sum(cor_xyz, 2)) * cor_xyz;
 
 xyz = diag(1 ./ sum(CMFs, 1)) * CMFs';
 
-plot(xyz(:, 1), xyz(:, 2), 'k-', 'LineWidth', 2); hold on;
+plot(xyz(:, 1), xyz(:, 2), 'k-', 'LineWidth', 2);
+hold on;
 plot(gun_xyz(:, 1), gun_xyz(:, 2), 'k.', 'MarkerSize', 30);
 plot(gun_xyz(:, 1), gun_xyz(:, 2), 'k--', 'LineWidth', 2.5);
 plot([gun_xyz(1, 1) gun_xyz(3, 1)], ...
