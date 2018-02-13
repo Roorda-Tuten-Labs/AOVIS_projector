@@ -10,8 +10,10 @@ function [window, oldVisualDebugLevel, oldSupressAllWarnings] = ...
     oldSupressAllWarnings = Screen('Preference', 'SuppressAllWarnings', 1);
     
 	% Hides the mouse cursor
-    if params.hide_cursor
-        HideCursor;
+    if isfield(params, 'hide_cursor')
+        if params.hide_cursor
+            HideCursor;
+        end    
     end
 
     if params.bits_sharp == 1
