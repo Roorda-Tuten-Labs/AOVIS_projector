@@ -87,6 +87,17 @@ function display_image(window, cal, params, image_matrix)
     stim.add_cross_hairs(window, params.fixation_size, ...
         [params.fixation_offset_x, params.fixation_offset_y], 2, 255);
 
+    % 4b. Print fixation location
+    relative_x = (params.fixation_offset_x - params.img_offset_x) / ...
+        params.pix_per_deg;    
+    if params.bits_sharp
+        % fix 1/2 downsample in x dimension
+        relative_x = relative_x * 2;
+    end
+    relative_y = (params.img_offset_y - params.fixation_offset_y) / ...
+        params.pix_per_deg;
+    util.pprint(relative_x, 2, 'X-offset (deg):');
+    util.pprint(relative_y, 2, 'Y-offset (deg):');
     
     % 5. Write text to the window.
     currentTextRow = 0;

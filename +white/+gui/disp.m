@@ -1,4 +1,4 @@
-function params = disp(subject)
+function params = disp()
     import white.*
     
     % display Brief description of GUI.
@@ -11,13 +11,15 @@ function params = disp(subject)
         params.bits_sharp = 0;
     end
     if ~isfield(params, 'hide_cursor')
-        params.hide_cursor = 1;
+        params.hide_cursor = 0;
     end
+        
     
     %  Construct the components    
     % ---- Figure handle
     f = figure('Visible','on','Name','parameters',...
-            'Position',[100, 100, 300, 385], 'Toolbar', 'none');
+            'Position',[100, 100, 300, 385], 'Toolbar', 'none', ...
+            'CloseRequestFcn',@my_closereq);
     
     % ---- Panel
     ph = uipanel('Parent',f, 'Title', 'Experiment parameters',...
@@ -181,10 +183,17 @@ function params = disp(subject)
     uiwait(f);
     
 
+    function my_closereq(~, ~)        
+        params = [];
+        uiresume(f);
+        delete(f);
+        
+    end    
+
     function run_program(~, ~)
         get_current_params();
         uiresume(f); 
-        close(f);        
+        delete(f);        
     end
     
     function get_saved_params(~, ~)
@@ -206,6 +215,8 @@ function params = disp(subject)
             set(fixation_size, 'String', params.fixation_size);
             [~, name_, ext_] = fileparts(params.fundus_image_file);
 
+            set(subject_id, 'String', params.subject_id);
+            
             set(fundus_img_file,'String', [name_, ext_]);
             set(cal_file,'String', params.cal_file);
             % cal files should always be in the same relative dir.
@@ -245,6 +256,8 @@ function params = disp(subject)
         
         params.debug_mode = str2double(get(get(debug_mode,...
             'SelectedObject'), 'Tag'));
+        params.bits_sharp = str2double(get(get(bits_sharp,...
+            'SelectedObject'), 'Tag'));        
 
         %%% image params
         [params.display_width, params.display_height] = Screen('DisplaySize', ...
@@ -262,6 +275,8 @@ function params = disp(subject)
         fname = fullfile(filedir, 'param', 'pix_per_deg.txt');
         params.pix_per_deg = csvread(fname);
         
+        params.hide_cursor = 0;
+
     end
 
 end

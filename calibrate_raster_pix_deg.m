@@ -77,6 +77,7 @@ try
     disp(['pix/deg: ' num2str(params.pix_per_deg)]);
 
     % save new params
+    
     csvwrite('param/pix_per_deg.txt', params.pix_per_deg);
     
     % cleanup
