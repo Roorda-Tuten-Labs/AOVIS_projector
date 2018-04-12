@@ -1,0 +1,14 @@
+*.eps
+sample/*
+.DS_Store
+*~
+*.asv
+*.m~
+data/sample*
+param/default_params.mat
+param/*
+*_OLD.mat
+
+cal/files/*
+cal/data/*
+cal/img/*
