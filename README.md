@@ -1,4 +1,4 @@
-# white
+# AOVIS_projector
 
 A program for controlling an external projector during  psychophysical experiments with SLO imaging.
 
