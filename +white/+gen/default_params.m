@@ -29,10 +29,10 @@ params.fixation_size = 4; % in pixels
 params.show_plot = 0;
 params.constant_stim = 1;
 
-params.cal_file = 'RoordaLabMarch12_2014b.mat';
+params.cal_file = 'PTB3TestCal.mat';
 params.cal_dir = fullfile(white.fil.get_path_to_white_dir,'cal', 'files');
 params.pause_time = 1.0; % in sec
-params.screen_ID = 0; % which screen to display.
+params.screen = 0; % which screen to display.
 params.textsize = 20; % size of text on screen.
 
 % ---------- Color Setup ----------
@@ -64,8 +64,10 @@ params.fundus_img_scale = 0.6;
 
 params.pin_locations = [];
 
+whitedir = white.fil.get_path_to_white_dir();
 params.image_rot = 0;
-params.fundus_image_file = '';
+params.fundus_image_file = fullfile(whitedir, 'img',...
+    'Roorda_OS_RedFreeBW.tif');
 
 params.stimulus_shape = 'rectangle';
 params.psych_method = 'display';
@@ -74,5 +76,8 @@ params.fixation_offset_x = params.pixel_width / 2; % center it
 params.fixation_offset_y = params.pixel_height / 2; % center it
 
 params.background = [0, 0, 0]; % defaults to black
+
+white.fil.check_pix_per_deg_exists();
+
 
 end

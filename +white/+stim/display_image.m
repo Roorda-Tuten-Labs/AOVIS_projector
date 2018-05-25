@@ -96,8 +96,8 @@ function display_image(window, cal, params, image_matrix)
     end
     relative_y = (params.img_offset_y - params.fixation_offset_y) / ...
         params.pix_per_deg;
-    util.pprint(relative_x, 2, 'X-offset (deg):');
-    util.pprint(relative_y, 2, 'Y-offset (deg):');
+    disp(['X-offset (deg):' num2str(relative_x)]);
+    disp(['Y-offset (deg):' num2str(relative_y)]);
     
     % 5. Write text to the window.
     currentTextRow = 0;
