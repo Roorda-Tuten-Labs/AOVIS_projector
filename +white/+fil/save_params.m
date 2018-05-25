@@ -9,7 +9,10 @@ function save_params(params, subject_id)
     % save the param files in white/param directory
     whitedir = white.fil.get_path_to_white_dir();
     savename = fullfile(whitedir, 'param', filename);
-    util.check_for_dir(fullfile(whitedir, 'param'));
+    % check that the param directory exists and create it if not.
+    if ~exist(fullfile(whitedir, 'param'), 'dir')
+        mkdir(fullfile(whitedir, 'param'))
+    end    
     save(savename, 'params');
     
     % additionally save params in save_dir if that field is passed in

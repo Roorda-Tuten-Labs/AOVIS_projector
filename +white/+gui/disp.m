@@ -271,9 +271,15 @@ function params = disp()
         
         % read pix per degree from txt file. This should only be edited
         % from calibrate_raster_pix_deg.
-        filedir = white.fil.get_path_to_white_dir();
+        filedir = white.fil.get_path_to_white_dir();        
         fname = fullfile(filedir, 'param', 'pix_per_deg.txt');
-        params.pix_per_deg = csvread(fname);
+        if exist(fname, 'file')
+            params.pix_per_deg = csvread(fname);
+        else
+            error(['param/pix_per_deg.txt file has been deleted, '...
+                'moved or corrupted. Run calibrate_raster_pix_deg.m '...
+                'or create a new pix_per_deg.txt file manually.'])
+        end
         
         params.hide_cursor = 0;
 
